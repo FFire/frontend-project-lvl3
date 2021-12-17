@@ -1,0 +1,19 @@
+{
+  "name": "frontend-project-lvl3",
+  "version": "1.0.0",
+  "description": "RSS reader",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FFire/frontend-project-lvl3.git"
+  },
+  "author": "Alexandr Belan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FFire/frontend-project-lvl3/issues"
+  },
+  "homepage": "https://github.com/FFire/frontend-project-lvl3#readme"
+}
