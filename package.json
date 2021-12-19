@@ -10,7 +10,7 @@
     "testURL": "http://localhost/"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=14"
   },
   "scripts": {
     "test": "npx jest --bail --colors",
