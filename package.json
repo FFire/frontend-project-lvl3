@@ -36,6 +36,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.16.5",
+    "@babel/eslint-parser": "^7.16.5",
     "@babel/preset-env": "^7.16.5",
     "@jest/globals": "^27.0.6",
     "@webpack-cli/generators": "^2.4.1",
