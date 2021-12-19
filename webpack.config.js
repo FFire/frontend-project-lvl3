@@ -11,7 +11,12 @@ const __dirname = path.dirname(__filename);
 const config = {
   entry: './src/index.js',
   output: {
+    filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
+  },
+  mode: 'production',
+  optimization: {
+    usedExports: true,
   },
   devServer: {
     open: true,
