@@ -1,15 +1,5 @@
-# 🚀 Welcome to your new awesome project!
+# 🚀 Welcome to awesome RSS reader!
 
-This project has been created using **webpack-cli**, you can now run
-
-```
-npm run build
-```
-
-or
-
-```
-yarn build
-```
-
-to bundle your application
+[![Maintainability](https://api.codeclimate.com/v1/badges/2c4bcb24164c30492734/maintainability)](https://codeclimate.com/github/FFire/frontend-project-lvl3/maintainability)
+[![ESLinter](https://github.com/FFire/frontend-project-lvl3/actions/workflows/ESLinter.yml/badge.svg)](https://github.com/FFire/frontend-project-lvl3/actions/workflows/ESLinter.yml)
+#
