@@ -3,40 +3,72 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import onChange from 'on-change';
 import * as yup from 'yup';
 
-const feedSchema = yup.string()
-  .required('URL is required')
-  .matches(/(https?:\/\/)?([\w-])+\.{1}([a-zA-Z]{2,63})([/\w-]*)*\/?\??([^#\n\r]*)?#?([^\n\r]*)/, 'Ссылка должна быть валидным URL');
-
 const render = (state, elements) => {
   const { feedback, urlInput } = elements;
-  feedback.textContent = state.error;
-  if (state.error) {
-    urlInput.classList.add('is-invalid');
-  } else {
-    urlInput.classList.remove('is-invalid');
+  const { mode, text } = state.message;
+
+  feedback.textContent = '';
+  urlInput.classList.remove('is-invalid');
+  urlInput.classList.remove('text-success');
+
+  switch (mode) {
+    case 'none':
+      break;
+
+    case 'success':
+      feedback.textContent = text;
+      urlInput.classList.add('text-success');
+      break;
+
+    case 'fail':
+      feedback.textContent = text;
+      urlInput.classList.add('is-invalid');
+      break;
+
+    default:
+      throw new Error(`No such message mode: ${mode}`);
   }
 };
 
 const elements = {
+  form: document.querySelector('form'),
   urlInput: document.querySelector('#url-input'),
   feedback: document.querySelector('.feedback.text-danger'),
 };
 
 const state = {
-  error: '',
+  message: { mode: 'none', text: '' }, // mode: ['none', 'success', 'fail']
   feeds: [],
 };
 
-const watchedState = onChange(state, (path, value, previousValue, applyData) => {
+const watchedState = onChange(state, () => { // path, value, previousValue, applyData
   render(state, elements);
 });
 
-const onUpdate = (e) => {
-  watchedState.error = e.target.value;
-  feedSchema.validate(e.target.value).catch((err) => {
-    console.dir(err.message);
-  });
-  // console.log(e.target.value);
+const onSubmit = (e) => {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const url = formData.get('url');
+  state.feeds.push(url);
+  console.dir(state.feeds);
 };
 
-elements.urlInput.addEventListener('input', onUpdate);
+const onValidate = (e) => {
+  const feedSchema = yup.string()
+    .required('URL is required')
+    .matches(/(https?:\/\/)?([\w-])+\.{1}([a-zA-Z]{2,63})([/\w-]*)*\/?\??([^#\n\r]*)?#?([^\n\r]*)/, 'Ссылка должна быть валидным URL')
+    .notOneOf(state.feeds, 'RSS уже существует');
+
+  feedSchema.validate(e.target.value)
+    .then(() => {
+      watchedState.message.text = '';
+      watchedState.message.mode = 'none';
+    })
+    .catch((err) => {
+      watchedState.message.text = err.message;
+      watchedState.message.mode = 'fail';
+    });
+};
+
+elements.urlInput.addEventListener('input', onValidate);
+elements.form.addEventListener('submit', onSubmit);
