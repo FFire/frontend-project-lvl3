@@ -17,9 +17,10 @@ export default {
     },
     messages: {
       successLoad: 'RSS успешно загружен',
-      errorUrlRequired: 'URL is required',
+      errorUrlRequired: 'Надо ввести URL',
       errorRssExist: 'RSS уже существует',
       errorUrlInvalid: 'Ссылка должна быть валидным URL',
+      errorNoMode: 'Неизвестынй режим. No such message mode: {{mode}}',
     },
   },
 };

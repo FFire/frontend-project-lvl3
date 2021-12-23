@@ -28,7 +28,7 @@ const app = (i18nInst) => {
         break;
 
       default:
-        throw new Error(`No such message mode: ${mode}`);
+        throw new Error(i18nInst.t('messages.errorNoMode', { mode }));
     }
   };
 
@@ -57,12 +57,12 @@ const app = (i18nInst) => {
 
   const onValidate = (e) => {
     const feedSchema = yup.string()
-      .required('URL is required')
+      .required(i18nInst.t('messages.errorUrlRequired'))
       .matches(
         /(https?:\/\/)?([\w-])+\.{1}([a-zA-Z]{2,63})([/\w-]*)*\/?\??([^#\n\r]*)?#?([^\n\r]*)/,
-        'Ссылка должна быть валидным URL',
+        i18nInst.t('messages.errorUrlInvalid'),
       )
-      .notOneOf(state.feeds, 'RSS уже существует');
+      .notOneOf(state.feeds, i18nInst.t('messages.errorRssExist'));
 
     feedSchema.validate(e.target.value)
       .then(() => {
