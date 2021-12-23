@@ -2,6 +2,8 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import onChange from 'on-change';
 import * as yup from 'yup';
+import i18n from 'i18next';
+import resources from './locales/index.js';
 
 const render = (state, elements) => {
   const { feedback, urlInput } = elements;
@@ -56,7 +58,10 @@ const onSubmit = (e) => {
 const onValidate = (e) => {
   const feedSchema = yup.string()
     .required('URL is required')
-    .matches(/(https?:\/\/)?([\w-])+\.{1}([a-zA-Z]{2,63})([/\w-]*)*\/?\??([^#\n\r]*)?#?([^\n\r]*)/, 'Ссылка должна быть валидным URL')
+    .matches(
+      /(https?:\/\/)?([\w-])+\.{1}([a-zA-Z]{2,63})([/\w-]*)*\/?\??([^#\n\r]*)?#?([^\n\r]*)/,
+      'Ссылка должна быть валидным URL',
+    )
     .notOneOf(state.feeds, 'RSS уже существует');
 
   feedSchema.validate(e.target.value)
