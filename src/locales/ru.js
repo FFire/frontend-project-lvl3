@@ -19,8 +19,11 @@ export default {
       successLoad: 'RSS успешно загружен',
       errorUrlRequired: 'Надо ввести URL',
       errorRssExist: 'RSS уже существует',
+      errorNotEmpty: 'Не должно быть пустым',
+      errorNotValidRss: 'Ресурс не содержит валидный RSS',
       errorUrlInvalid: 'Ссылка должна быть валидным URL',
-      errorNoMode: 'Неизвестынй режим. No such message mode: {{mode}}',
+      errorNetwork: 'Ошибка сети',
+      errorNoMode: 'Неизвестный режим. No such message mode: {{mode}}',
     },
   },
 };
