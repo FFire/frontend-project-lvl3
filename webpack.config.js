@@ -19,7 +19,7 @@ const config = {
     usedExports: true,
   },
   devServer: {
-    open: true,
+    open: { app: { name: 'Google Chrome' } },
     host: 'localhost',
   },
   plugins: [
