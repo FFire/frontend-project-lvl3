@@ -1,10 +1,13 @@
+// @ts-check
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import onChange from 'on-change';
 import * as yup from 'yup';
 import i18n from 'i18next';
 import resources from './locales/index.js';
+import { inputValidityModes, messgeModes, processingModes } from './modes.js';
 
-const app = (i18nInst) => {
+const app = (t) => {
   const render = (state, elements) => {
     const { feedback, urlInput } = elements;
     const { mode, text } = state.message;
@@ -14,21 +17,21 @@ const app = (i18nInst) => {
     urlInput.classList.remove('text-success');
 
     switch (mode) {
-      case 'none':
+      case messgeModes.none:
         break;
 
-      case 'success':
+      case messgeModes.success:
         feedback.textContent = text;
         urlInput.classList.add('text-success');
         break;
 
-      case 'fail':
+      case messgeModes.fail:
         feedback.textContent = text;
         urlInput.classList.add('is-invalid');
         break;
 
       default:
-        throw new Error(i18nInst.t('messages.errorNoMode', { mode }));
+        throw new Error(t('messages.errorNoMode', { mode }));
     }
   };
 
@@ -39,7 +42,14 @@ const app = (i18nInst) => {
   };
 
   const state = {
-    message: { mode: 'none', text: '' }, // mode: ['none', 'success', 'fail']
+    inputValue: '',
+    inputValidity: inputValidityModes.valid,
+    processing: processingModes.showContent,
+    message: {
+      mode: messgeModes.none,
+      text: '',
+    },
+
     feeds: [],
   };
 
@@ -57,12 +67,12 @@ const app = (i18nInst) => {
 
   const onValidate = (e) => {
     const feedSchema = yup.string()
-      .required(i18nInst.t('messages.errorUrlRequired'))
+      .required(t('messages.errorUrlRequired'))
       .matches(
         /(https?:\/\/)?([\w-])+\.{1}([a-zA-Z]{2,63})([/\w-]*)*\/?\??([^#\n\r]*)?#?([^\n\r]*)/,
-        i18nInst.t('messages.errorUrlInvalid'),
+        t('messages.errorUrlInvalid'),
       )
-      .notOneOf(state.feeds, i18nInst.t('messages.errorRssExist'));
+      .notOneOf(state.feeds, t('messages.errorRssExist'));
 
     feedSchema.validate(e.target.value)
       .then(() => {
@@ -79,14 +89,11 @@ const app = (i18nInst) => {
   elements.form.addEventListener('submit', onSubmit);
 };
 
-export default async () => {
+export default () => {
   const defaultLanguage = 'ru';
-  const i18nInst = i18n.createInstance();
-  await i18nInst.init({
+  i18n.init({
     lng: defaultLanguage,
     debug: true,
     resources,
-  });
-
-  app(i18nInst);
+  }).then((t) => app(t));
 };
