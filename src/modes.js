@@ -1,4 +1,4 @@
-export const inputValidityModes = {
+export const validityModes = {
   valid: 'valid',
   invalid: 'invalid',
 };

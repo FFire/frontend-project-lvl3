@@ -23,7 +23,7 @@ export default {
       errorNotValidRss: 'Resource does not contain valid RSS',
       errorUrlInvalid: 'The link must be a valid URL',
       errorNetwork: 'Network error',
-      errorNoMode: 'No such message mode: {{mode}}',
+      errorNoPath: 'No such message state: {{path}}',
     },
   },
 };

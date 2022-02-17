@@ -23,7 +23,7 @@ export default {
       errorNotValidRss: 'Ресурс не содержит валидный RSS',
       errorUrlInvalid: 'Ссылка должна быть валидным URL',
       errorNetwork: 'Ошибка сети',
-      errorNoMode: 'Неизвестный режим. No such message mode: {{mode}}',
+      errorNoPath: 'Неизвестный стейт. No such state: {{path}}',
     },
   },
 };
