@@ -8,7 +8,7 @@ const app = (t) => {
   const elements = {
     form: document.querySelector('form'),
     urlInput: document.querySelector('#url-input'),
-    message: document.querySelector('.feedback.text-danger'),
+    message: document.querySelector('.feedback'),
     addButton: document.querySelector('button[type="submit"]'),
   };
 
@@ -16,7 +16,7 @@ const app = (t) => {
     processing: processingModes.showContent,
     urlInput: {
       text: '',
-      validity: validityModes.valid,
+      // validity: validityModes.valid,
       disabled: false,
     },
     message: {
@@ -28,6 +28,8 @@ const app = (t) => {
     },
     feeds: [],
   };
+
+  const getFeedUrls = () => state.feeds.map(({ url }) => url);
 
   const watchedState = onChange(state, (path, value, prevValue) => {
     // render(state, elements);
@@ -44,17 +46,19 @@ const app = (t) => {
       case 'urlInput.text':
         elements.urlInput.value = value;
         break;
-
-      case 'urlInput.validity':
-        if (value === validityModes.invalid) {
-          // elements.urlInput.classList.add('is-invalid');
-          // watchedState.addButton.disabled = true;
-        }
-        if (value === validityModes.valid) {
-          // elements.urlInput.classList.add('text-success');
-          // watchedState.addButton.disabled = false;
-        }
+      case 'urlInput.disabled':
+        elements.urlInput.disabled = value;
         break;
+        // case 'urlInput.validity':
+        //   if (value === validityModes.invalid) {
+        //     // elements.urlInput.classList.add('is-invalid');
+        //     // watchedState.addButton.disabled = true;
+        //   }
+        //   if (value === validityModes.valid) {
+        //     // elements.urlInput.classList.add('text-success');
+        //     // watchedState.addButton.disabled = false;
+        //   }
+        //   break;
 
       case 'message.mode':
         elements.message.classList.remove('text-danger');
@@ -95,8 +99,6 @@ const app = (t) => {
     visited: false,
   });
 
-  const getFeedUrls = () => state.feeds.map(({ url }) => url);
-
   const validate = (feedUrl, feeds) => {
     yup.string()
       .required(t('messages.errorUrlRequired'))
@@ -107,21 +109,19 @@ const app = (t) => {
       .notOneOf(feeds, t('messages.errorRssExist'))
       .validate(feedUrl)
       .then(() => {
-        // watchedState.message.text = '';
         watchedState.message.mode = messgeModes.success;
-        watchedState.urlInput.validity = validityModes.valid;
+        // watchedState.urlInput.validity = validityModes.valid;
       })
       .catch((err) => {
         watchedState.message.text = err.message;
         watchedState.message.mode = messgeModes.fail;
-        watchedState.urlInput.validity = validityModes.invalid;
+        // watchedState.urlInput.validity = validityModes.invalid;
       });
   };
 
   const handleInputChange = ({ target: { value: feedUrl } }) => {
     watchedState.urlInput.text = feedUrl;
   };
-
   const onSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
