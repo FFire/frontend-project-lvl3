@@ -14,6 +14,7 @@ export default {
       example: 'Пример: https://ru.hexlet.io/lessons.rss',
       posts: 'Посты',
       feeds: 'Фиды',
+      preview: 'Просмотр',
     },
     messages: {
       successLoad: 'RSS успешно загружен',

@@ -1,7 +1,3 @@
-export const validityModes = {
-  valid: 'valid',
-  invalid: 'invalid',
-};
 export const messgeModes = {
   none: 'none',
   success: 'success',
@@ -9,5 +5,6 @@ export const messgeModes = {
 };
 export const processingModes = {
   loading: 'loading',
-  showContent: 'showContent',
+  waiting: 'waiting',
+  error: 'error',
 };

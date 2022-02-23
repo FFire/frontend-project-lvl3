@@ -2,21 +2,28 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import _ from 'lodash';
 import onChange from 'on-change';
 import * as yup from 'yup';
-import { validityModes, messgeModes, processingModes } from './modes.js';
+import { messgeModes, processingModes } from './modes.js';
 
 const app = (t) => {
   const elements = {
-    form: document.querySelector('form'),
-    urlInput: document.querySelector('#url-input'),
-    message: document.querySelector('.feedback'),
-    addButton: document.querySelector('button[type="submit"]'),
+    form: document.querySelector('form.rss-form'),
+    input: document.querySelector('#url-input'),
+    feedback: document.querySelector('.feedback'),
+    submit: document.querySelector('.rss-form button[type="submit"]'),
+    feedsBox: document.querySelector('.feeds'),
+    postsBox: document.querySelector('.posts'),
+    modal: document.querySelector('#modal'),
   };
 
   const state = {
-    processing: processingModes.showContent,
-    urlInput: {
+    processing: {
+      mode: processingModes.waiting,
+      error: null,
+    },
+    isFormValid: false,
+    error: null,
+    input: {
       text: '',
-      // validity: validityModes.valid,
       disabled: false,
     },
     message: {
@@ -27,6 +34,9 @@ const app = (t) => {
       disabled: false,
     },
     feeds: [],
+    posts: [],
+    seenPosts: new Set(),
+    modal: { postId: null },
   };
 
   const getFeedUrls = () => state.feeds.map(({ url }) => url);
@@ -39,43 +49,43 @@ const app = (t) => {
     console.log('prevValue:', prevValue);
 
     switch (path) {
-      // case path.match(/urlInput/)?.input:
+      // case path.match(/input/)?.input:
       //   console.log('🚀🚀🚀🚀');
       //   break;
 
-      case 'urlInput.text':
-        elements.urlInput.value = value;
+      case 'input.text':
+        elements.input.value = value;
         break;
-      case 'urlInput.disabled':
-        elements.urlInput.disabled = value;
+      case 'input.disabled':
+        elements.input.disabled = value;
         break;
-        // case 'urlInput.validity':
+        // case 'input.validity':
         //   if (value === validityModes.invalid) {
-        //     // elements.urlInput.classList.add('is-invalid');
+        //     // elements.input.classList.add('is-invalid');
         //     // watchedState.addButton.disabled = true;
         //   }
         //   if (value === validityModes.valid) {
-        //     // elements.urlInput.classList.add('text-success');
+        //     // elements.input.classList.add('text-success');
         //     // watchedState.addButton.disabled = false;
         //   }
         //   break;
 
       case 'message.mode':
-        elements.message.classList.remove('text-danger');
-        elements.message.classList.remove('text-success');
+        elements.feedback.classList.remove('text-danger');
+        elements.feedback.classList.remove('text-success');
         if (value === messgeModes.fail) {
-          elements.message.classList.add('text-danger');
+          elements.feedback.classList.add('text-danger');
         }
         if (value === messgeModes.success) {
-          elements.message.classList.add('text-success');
+          elements.feedback.classList.add('text-success');
         }
         if (value === messgeModes.none) {
-          // watchedState.urlInput.validity = validityModes.valid;
+          // watchedState.input.validity = validityModes.valid;
         }
         break;
 
-      case 'message.text':
-        elements.message.textContent = value;
+      case 'feedback.text':
+        elements.feedback.textContent = value;
         break;
 
       case 'addButton.disabled':
@@ -84,8 +94,8 @@ const app = (t) => {
 
       case 'feeds':
         console.log('❤️🚀❤️🚀❤️🚀❤️🚀❤️🚀');
-        watchedState.message.mode = messgeModes.success;
-        watchedState.message.text = t('messages.successLoad');
+        watchedState.feedback.mode = messgeModes.success;
+        watchedState.feedback.text = t('messages.successLoad');
         break;
 
       default:
@@ -109,18 +119,18 @@ const app = (t) => {
       .notOneOf(feeds, t('messages.errorRssExist'))
       .validate(feedUrl)
       .then(() => {
-        watchedState.message.mode = messgeModes.success;
-        // watchedState.urlInput.validity = validityModes.valid;
+        watchedState.feedback.mode = messgeModes.success;
+        // watchedState.input.validity = validityModes.valid;
       })
       .catch((err) => {
-        watchedState.message.text = err.message;
-        watchedState.message.mode = messgeModes.fail;
-        // watchedState.urlInput.validity = validityModes.invalid;
+        watchedState.feedback.text = err.message;
+        watchedState.feedback.mode = messgeModes.fail;
+        // watchedState.input.validity = validityModes.invalid;
       });
   };
 
   const handleInputChange = ({ target: { value: feedUrl } }) => {
-    watchedState.urlInput.text = feedUrl;
+    watchedState.input.text = feedUrl;
   };
   const onSubmit = (e) => {
     e.preventDefault();
@@ -130,7 +140,7 @@ const app = (t) => {
     validate(feedUrl, getFeedUrls());
     watchedState.feeds.push(feed);
   };
-  elements.urlInput.addEventListener('input', handleInputChange);
+  elements.input.addEventListener('input', handleInputChange);
   elements.form.addEventListener('submit', onSubmit);
 };
 
