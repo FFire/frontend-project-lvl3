@@ -8765,9 +8765,9 @@
     n(8929),
     n(7523),
     n(4633);
-    const Ci = n(9669);
+    const axios = n(9669);
     const ji = n(9521);
-    const Ai = n(3955);
+    const uniqueId = n(3955);
     function Ti(e) {
       return (
         (Ti = typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol'
@@ -12185,17 +12185,17 @@
         },
       },
     };
-    const Hs = (e) => {
-      const t = new DOMParser().parseFromString(e, 'text/xml');
-      const n = t.querySelector('parsererror');
-      if (n) {
-        const t = new Error(n.textContent);
-        throw ((t.isParsingError = true), (t.data = e), t);
+    const parseXmlRss = (rssBody) => {
+      const domParser = new DOMParser().parseFromString(rssBody, 'text/xml');
+      const parseError = domParser.querySelector('parsererror');
+      if (parseError) {
+        const errorObj = new Error(parseError.textContent);
+        throw ((errorObj.isParsingError = true), (errorObj.data = rssBody), errorObj);
       }
       return {
-        title: t.querySelector('channel > title').textContent,
-        descrpition: t.querySelector('channel > description').textContent,
-        items: [...t.querySelectorAll('item')].map((e) => ({
+        title: domParser.querySelector('channel > title').textContent,
+        description: domParser.querySelector('channel > description').textContent,
+        items: [...domParser.querySelectorAll('item')].map((e) => ({
           title: e.querySelector('title').textContent,
           link: e.querySelector('link').textContent,
           description: e.querySelector('description').textContent,
@@ -12816,9 +12816,13 @@
     };
     (ko.target = (e) => (e && e[Vs]) || e),
     (ko.unsubscribe = (e) => e[qs] || e);
-    const So = ko;
+
+
+
+
+    const onChange = ko;
     const Co = (elements, state, i18n) => {
-      const r = So(state, (path) => {
+      const r = onChange(state, (path) => {
         switch (path) {
           case 'form':
             ((state) => {
@@ -12972,40 +12976,43 @@
       });
       return r;
     };
-    const jo = (e) => {
-      const t = new URL('/get', 'https://hexlet-allorigins.herokuapp.com');
+
+    const makeAllOriginUrl = (rssUrl) => {
+      const allOrigin = new URL('/get', 'https://hexlet-allorigins.herokuapp.com');
       return (
-        t.searchParams.set('url', e),
-        t.searchParams.set('disableCache', 'true'),
-        t.toString()
+        allOrigin.searchParams.set('url', rssUrl),
+        allOrigin.searchParams.set('disableCache', 'true'),
+        allOrigin.toString()
       );
     };
-    const Ao = (e) => {
-      const t = e.feeds.map((t) => {
-        const n = jo(t.url);
-        return Ci.get(n)
-          .then((n) => {
-            const r = Hs(n.data.contents).items.map((e) => ({
-              ...e,
-              channelId: t.id,
+
+    const updateRss = (state) => {
+      const t = state.feeds.map((feed) => {
+        const originUrl = makeAllOriginUrl(feed.url);
+        return axios.get(originUrl)
+          .then((rssResponce) => {
+            const posts = parseXmlRss(rssResponce.data.contents).items.map((item) => ({
+              ...item,
+              channelId: feed.id,
             }));
-            const i = e.posts.filter((e) => e.channelId === t.id);
-            const s = ji(r, i, (e, t) => e.title === t.title).map((e) => ({
+            const statePosts = state.posts.filter((post) => post.channelId === feed.id);
+            const newPosts = ji(posts, statePosts, (e, t) => e.title === t.title).map((e) => ({
               ...e,
-              id: Ai(),
+              id: uniqueId(),
             }));
-            e.posts.unshift(...s);
+            state.posts.unshift(...newPosts);
           })
           .catch((e) => {
             console.error(e);
           });
       });
       Promise.all(t).finally(() => {
-        setTimeout(() => Ao(e), 5e3);
+        setTimeout(() => updateRss(state), 5e3);
       });
     };
+
     (() => {
-      const e = {
+      const elements = {
         form: document.querySelector('.rss-form'),
         input: document.querySelector('.rss-form input'),
         feedback: document.querySelector('.feedback'),
@@ -13014,7 +13021,8 @@
         postsBox: document.querySelector('.posts'),
         modal: document.querySelector('#modal'),
       };
-      const t = {
+
+      const state = {
         feeds: [],
         posts: [],
         loadingProcess: { status: 'idle', error: null },
@@ -13022,8 +13030,9 @@
         modal: { postId: null },
         ui: { seenPosts: new Set() },
       };
-      const n = $s.createInstance();
-      n.init({ lng: 'ru', debug: false, resources: Us }).then(() => {
+
+      const i18n = $s.createInstance();
+      i18n.init({ lng: 'ru', debug: false, resources: Us }).then(() => {
         let r;
         (r = zs),
         Object.keys(r).forEach((e) => {
@@ -13032,66 +13041,68 @@
           });
         });
         const i = wi().url().required();
-        const s = Co(e, t, n);
-        e.form.addEventListener('submit', (e) => {
+        const watchedState = Co(elements, state, i18n);
+        elements.form.addEventListener('submit', (e) => {
           e.preventDefault();
-          const t = new FormData(e.target).get('url');
-          ((e, t) => {
-            const n = t.map((e) => e.url);
+          const rssUrl = new FormData(e.target).get('url');
+
+
+          ((rssUrl, feeds) => {
+            const feedUrls = feeds.map((e) => e.url);
             return i
-              .notOneOf(n)
-              .validate(e)
+              .notOneOf(feedUrls)
+              .validate(rssUrl)
               .then(() => null)
-              .catch((e) => e.message);
-          })(t, s.feeds).then((e) => {
+              .catch((err) => err.message);
+          })(rssUrl, watchedState.feeds).then((e) => {
             e
-              ? (s.form = { ...s.form, valid: false, error: e.key })
-              : ((s.form = { ...s.form, valid: true, error: null }),
-              ((e, t) => {
-                e.loadingProcess.status = 'loading';
-                const n = jo(t);
-                Ci.get(n, { timeout: 1e4 })
-                  .then((n) => {
-                    const r = Hs(n.data.contents);
-                    const i = {
-                      url: t,
-                      id: Ai(),
-                      title: r.title,
-                      description: r.descrpition,
+              ? (watchedState.form = { ...watchedState.form, valid: false, error: e.key })
+              : ((watchedState.form = { ...watchedState.form, valid: true, error: null }),
+              ((state, rssUrl) => {
+                state.loadingProcess.status = 'loading';
+                const originUrl = makeAllOriginUrl(rssUrl);
+                axios.get(originUrl, { timeout: 1e4 })
+                  .then((rssResponce) => {
+                    const parsedFeed = parseXmlRss(rssResponce.data.contents);
+                    const feed = {
+                      url: rssUrl,
+                      id: uniqueId(),
+                      title: parsedFeed.title,
+                      description: parsedFeed.description,
                     };
-                    const s = r.items.map((e) => ({
-                      ...e,
-                      channelId: i.id,
-                      id: Ai(),
+                    const posts = parsedFeed.items.map((item) => ({
+                      ...item,
+                      channelId: feed.id,
+                      id: uniqueId(),
                     }));
-                    e.posts.unshift(...s),
-                    e.feeds.unshift(i),
-                    (e.loadingProcess.error = null),
-                    (e.loadingProcess.status = 'idle'),
-                    (e.form = {
-                      ...e.form,
+                    state.posts.unshift(...posts),
+                    state.feeds.unshift(feed),
+                    (state.loadingProcess.error = null),
+                    (state.loadingProcess.status = 'idle'),
+                    (state.form = {
+                      ...state.form,
                       status: 'filling',
                       error: null,
                     });
                   })
-                  .catch((t) => {
-                    console.log(t),
-                    (e.loadingProcess.error = ((e) => (e.isParsingError
+                  .catch((err) => {
+                    console.log(err),
+                    (state.loadingProcess.error = ((e) => (e.isParsingError
                       ? 'noRss'
                       : e.isAxiosError
                         ? 'network'
-                        : 'unknown'))(t)),
-                    (e.loadingProcess.status = 'failed');
+                        : 'unknown'))(err)),
+                    (state.loadingProcess.status = 'failed');
                   });
-              })(s, t));
+              })(watchedState, rssUrl));
           });
         }),
-        e.postsBox.addEventListener('click', (e) => {
+        elements.postsBox.addEventListener('click', (e) => {
           if (!('id' in e.target.dataset)) return;
-          const { id: t } = e.target.dataset;
-          (s.modal.postId = String(t)), s.ui.seenPosts.add(t);
+          const { id } = e.target.dataset;
+          (watchedState.modal.postId = String(id)), watchedState.ui.seenPosts.add(id);
         }),
-        setTimeout(() => Ao(s), 5e3);
+        setTimeout(() => updateRss(watchedState), 5e3);
       });
     })();
   })();

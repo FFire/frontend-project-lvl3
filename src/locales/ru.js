@@ -24,6 +24,7 @@ export default {
       errorNotValidRss: 'Ресурс не содержит валидный RSS',
       errorUrlInvalid: 'Ссылка должна быть валидным URL',
       errorNetwork: 'Ошибка сети',
+      errorUnknown: 'Неизвестная ошибка',
       errorNoPath: 'Неизвестный стейт. No such state: {{path}}',
     },
   },

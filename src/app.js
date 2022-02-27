@@ -1,3 +1,4 @@
+import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import _ from 'lodash';
 import onChange from 'on-change';
@@ -18,15 +19,15 @@ const app = (t) => {
   const state = {
     processing: {
       mode: processingModes.waiting,
-      error: null,
+      // error: null,
     },
     isFormValid: false,
-    error: null,
+    // error: null,
     input: {
       text: '',
       disabled: false,
     },
-    message: {
+    feedback: {
       text: '',
       mode: messgeModes.none,
     },
@@ -70,7 +71,7 @@ const app = (t) => {
         //   }
         //   break;
 
-      case 'message.mode':
+      case 'feedback.mode':
         elements.feedback.classList.remove('text-danger');
         elements.feedback.classList.remove('text-success');
         if (value === messgeModes.fail) {
@@ -81,6 +82,17 @@ const app = (t) => {
         }
         if (value === messgeModes.none) {
           // watchedState.input.validity = validityModes.valid;
+        }
+        break;
+
+      case 'processing.mode':
+        if (value === processingModes.loading) {
+          elements.input.disabled = true;
+          elements.submit.disabled = true;
+        }
+        if (value === processingModes.waiting) {
+          elements.input.disabled = false;
+          elements.submit.disabled = false;
         }
         break;
 
@@ -98,15 +110,15 @@ const app = (t) => {
         watchedState.feedback.text = t('messages.successLoad');
         break;
 
+      case 'posts':
+        break;
+
+      case 'processing.error':
+        break;
+
       default:
         throw new Error(t('messages.errorNoPath', { path }));
     }
-  });
-
-  const makeFeed = (url) => ({
-    key: _.uniqueId(),
-    url,
-    visited: false,
   });
 
   const validate = (feedUrl, feeds) => {
@@ -120,25 +132,89 @@ const app = (t) => {
       .validate(feedUrl)
       .then(() => {
         watchedState.feedback.mode = messgeModes.success;
-        // watchedState.input.validity = validityModes.valid;
       })
       .catch((err) => {
         watchedState.feedback.text = err.message;
         watchedState.feedback.mode = messgeModes.fail;
-        // watchedState.input.validity = validityModes.invalid;
       });
   };
 
   const handleInputChange = ({ target: { value: feedUrl } }) => {
     watchedState.input.text = feedUrl;
   };
+
+  const makeOriginUrl = (rssUrl) => {
+    const alloriginsUrl = 'https://hexlet-allorigins.herokuapp.com';
+    const allOrigin = new URL('/get', alloriginsUrl);
+    allOrigin.searchParams.set('url', rssUrl);
+    allOrigin.searchParams.set('disableCache', 'true');
+    return allOrigin.toString();
+  };
+
+  const parseXmlRss = (rssBody) => {
+    const domParser = new DOMParser().parseFromString(rssBody, 'text/xml');
+    const parseError = domParser.querySelector('parsererror');
+    if (parseError) {
+      const errorObj = new Error(parseError.textContent);
+      errorObj.isParsingError = true;
+      errorObj.data = rssBody;
+      throw errorObj;
+    }
+    return {
+      title: domParser.querySelector('channel > title').textContent,
+      description: domParser.querySelector('channel > description').textContent,
+      items: [...domParser.querySelectorAll('item')].map((e) => ({
+        title: e.querySelector('title').textContent,
+        link: e.querySelector('link').textContent,
+        description: e.querySelector('description').textContent,
+      })),
+    };
+  };
+
   const onSubmit = (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
-    const feedUrl = formData.get('url');
-    const feed = makeFeed(feedUrl);
+    const feedUrl = new FormData(e.target).get('url');
+    watchedState.processing.mode = processingModes.loading;
     validate(feedUrl, getFeedUrls());
-    watchedState.feeds.push(feed);
+    const originUrl = makeOriginUrl(feedUrl);
+
+    axios.get(originUrl)
+      .then((rssResponce) => {
+        const { data: { contents } } = rssResponce;
+        const parsedFeed = parseXmlRss(contents);
+        const feed = {
+          url: feedUrl,
+          id: _.uniqueId(),
+          title: parsedFeed.title,
+          description: parsedFeed.description,
+        };
+        const posts = parsedFeed.items.map((item) => ({
+          ...item,
+          channelId: feed.id,
+          id: _.uniqueId(),
+        }));
+        watchedState.posts = [...posts, ...watchedState.posts];
+        watchedState.feeds = [feed, ...watchedState.feeds];
+        watchedState.processing.mode = processingModes.waiting;
+        watchedState.processing.error = '';
+        // watchedState.error = '';
+        watchedState.input.text = '';
+
+        console.log(feed, posts);
+      })
+      .catch((err) => {
+        const getErrorCode = (errorObj) => {
+          if (errorObj.isParsingError) return 'messages.errorNotValidRss';
+          if (errorObj.isAxiosError) return 'messages.errorNetwork';
+          return 'messages.errorUnknown';
+        };
+
+        watchedState.processing.mode = processingModes.error;
+        watchedState.feedback.text = t(getErrorCode(err));
+        watchedState.feedback.mode = messgeModes.fail;
+
+        console.error(err);
+      });
   };
   elements.input.addEventListener('input', handleInputChange);
   elements.form.addEventListener('submit', onSubmit);
