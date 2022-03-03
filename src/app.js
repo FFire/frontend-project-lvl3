@@ -5,7 +5,7 @@ import onChange from 'on-change';
 import * as yup from 'yup';
 import { messgeModes, processingModes } from './modes.js';
 
-const app = (t) => {
+const app = (i18n) => {
   const elements = {
     form: document.querySelector('form.rss-form'),
     input: document.querySelector('#url-input'),
@@ -19,10 +19,8 @@ const app = (t) => {
   const state = {
     processing: {
       mode: processingModes.waiting,
-      // error: null,
     },
     isFormValid: false,
-    // error: null,
     input: {
       text: '',
       disabled: false,
@@ -40,36 +38,54 @@ const app = (t) => {
     modal: { postId: null },
   };
 
-  const getFeedUrls = () => state.feeds.map(({ url }) => url);
-
+  const renderFeeds = (st, el) => {
+    const { feeds } = st;
+    const { feedsBox } = el;
+    const card = document.createElement('div');
+    card.classList.add('card', 'border-0');
+    const cardBody = document.createElement('div');
+    cardBody.classList.add('card-body');
+    card.appendChild(cardBody);
+    const title = document.createElement('h2');
+    title.classList.add('card-title', 'h4');
+    title.textContent = i18n('ui.feeds');
+    cardBody.appendChild(title);
+    const ul = document.createElement('ul');
+    ul.classList.add('list-group', 'border-0', 'rounded-0');
+    const items = feeds.map((feed) => {
+      const htmlLi = document.createElement('li');
+      htmlLi.classList.add(
+        'list-group-item',
+        'border-0',
+        'border-end-0',
+      );
+      const h3 = document.createElement('h3');
+      h3.classList.add('h6', 'm-0');
+      h3.textContent = feed.title;
+      const p = document.createElement('p');
+      p.classList.add('m-0', 'small', 'text-black-50');
+      p.textContent = feed.description;
+      htmlLi.append(h3, p);
+      return htmlLi;
+    });
+    ul.append(...items);
+    card.appendChild(ul);
+    feedsBox.innerHTML = '';
+    feedsBox.appendChild(card);
+  };
   const watchedState = onChange(state, (path, value, prevValue) => {
-    // render(state, elements);
     console.log('--------------');
     console.log('path:', path);
     console.log('value:', value);
     console.log('prevValue:', prevValue);
 
     switch (path) {
-      // case path.match(/input/)?.input:
-      //   console.log('🚀🚀🚀🚀');
-      //   break;
-
       case 'input.text':
         elements.input.value = value;
         break;
       case 'input.disabled':
         elements.input.disabled = value;
         break;
-        // case 'input.validity':
-        //   if (value === validityModes.invalid) {
-        //     // elements.input.classList.add('is-invalid');
-        //     // watchedState.addButton.disabled = true;
-        //   }
-        //   if (value === validityModes.valid) {
-        //     // elements.input.classList.add('text-success');
-        //     // watchedState.addButton.disabled = false;
-        //   }
-        //   break;
 
       case 'feedback.mode':
         elements.feedback.classList.remove('text-danger');
@@ -107,7 +123,8 @@ const app = (t) => {
       case 'feeds':
         console.log('❤️🚀❤️🚀❤️🚀❤️🚀❤️🚀');
         watchedState.feedback.mode = messgeModes.success;
-        watchedState.feedback.text = t('messages.successLoad');
+        watchedState.feedback.text = i18n('messages.successLoad');
+        renderFeeds(state, elements);
         break;
 
       case 'posts':
@@ -117,18 +134,18 @@ const app = (t) => {
         break;
 
       default:
-        throw new Error(t('messages.errorNoPath', { path }));
+        throw new Error(i18n('messages.errorNoPath', { path }));
     }
   });
 
   const validate = (feedUrl, feeds) => {
     yup.string()
-      .required(t('messages.errorUrlRequired'))
+      .required(i18n('messages.errorUrlRequired'))
       .matches(
         /(https?:\/\/)?([\w-])+\.{1}([a-zA-Z]{2,63})([/\w-]*)*\/?\??([^#\n\r]*)?#?([^\n\r]*)/,
-        t('messages.errorUrlInvalid'),
+        i18n('messages.errorUrlInvalid'),
       )
-      .notOneOf(feeds, t('messages.errorRssExist'))
+      .notOneOf(feeds, i18n('messages.errorRssExist'))
       .validate(feedUrl)
       .then(() => {
         watchedState.feedback.mode = messgeModes.success;
@@ -175,7 +192,7 @@ const app = (t) => {
     e.preventDefault();
     const feedUrl = new FormData(e.target).get('url');
     watchedState.processing.mode = processingModes.loading;
-    validate(feedUrl, getFeedUrls());
+    validate(feedUrl, state.feeds.map(({ url }) => url));
     const originUrl = makeOriginUrl(feedUrl);
 
     axios.get(originUrl)
@@ -210,7 +227,7 @@ const app = (t) => {
         };
 
         watchedState.processing.mode = processingModes.error;
-        watchedState.feedback.text = t(getErrorCode(err));
+        watchedState.feedback.text = i18n(getErrorCode(err));
         watchedState.feedback.mode = messgeModes.fail;
 
         console.error(err);
