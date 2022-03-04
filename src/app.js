@@ -35,12 +35,13 @@ const app = (i18n) => {
     feeds: [],
     posts: [],
     seenPosts: new Set(),
-    modal: { postId: null },
+    modalPostId: null,
   };
 
-  const renderFeeds = (st, el) => {
+  const renderFeeds = (st, el, i18nt) => {
     const { feeds } = st;
     const { feedsBox } = el;
+
     const card = document.createElement('div');
     card.classList.add('card', 'border-0');
     const cardBody = document.createElement('div');
@@ -48,13 +49,14 @@ const app = (i18n) => {
     card.appendChild(cardBody);
     const title = document.createElement('h2');
     title.classList.add('card-title', 'h4');
-    title.textContent = i18n('ui.feeds');
+    title.textContent = i18nt('ui.feeds');
     cardBody.appendChild(title);
     const ul = document.createElement('ul');
     ul.classList.add('list-group', 'border-0', 'rounded-0');
+
     const items = feeds.map((feed) => {
-      const htmlLi = document.createElement('li');
-      htmlLi.classList.add(
+      const li = document.createElement('li');
+      li.classList.add(
         'list-group-item',
         'border-0',
         'border-end-0',
@@ -65,14 +67,82 @@ const app = (i18n) => {
       const p = document.createElement('p');
       p.classList.add('m-0', 'small', 'text-black-50');
       p.textContent = feed.description;
-      htmlLi.append(h3, p);
-      return htmlLi;
+      li.append(h3, p);
+      return li;
     });
+
     ul.append(...items);
     card.appendChild(ul);
     feedsBox.innerHTML = '';
     feedsBox.appendChild(card);
   };
+
+  const renderPosts = (st, el, i18nt) => {
+    const { posts, seenPosts } = st;
+    const { postsBox } = el;
+
+    const card = document.createElement('div');
+    card.classList.add('card', 'border-0');
+    const cardBody = document.createElement('div');
+    cardBody.classList.add('card-body');
+    card.appendChild(cardBody);
+    const title = document.createElement('h2');
+    title.classList.add('card-title', 'h4');
+    title.textContent = i18nt('ui.posts');
+    cardBody.appendChild(title);
+    const ul = document.createElement('ul');
+    ul.classList.add('list-group', 'border-0', 'rounded-0');
+
+    const items = posts.map((post) => {
+      const li = document.createElement('li');
+      li.classList.add(
+        'list-group-item',
+        'd-flex',
+        'justify-content-between',
+        'align-items-start',
+        'border-0',
+        'border-end-0',
+      );
+      const a = document.createElement('a');
+      a.setAttribute('href', post.link);
+      const isSeenClass = seenPosts.has(post.id) ? ['fw-normal', 'link-secondary'] : ['fw-bold'];
+      a.classList.add(...isSeenClass);
+      a.dataset.id = post.id;
+      a.textContent = post.title;
+      a.setAttribute('target', '_blank');
+      a.setAttribute('rel', 'noopener noreferrer');
+      li.appendChild(a);
+      const button = document.createElement('button');
+      button.setAttribute('type', 'button');
+      button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
+      button.dataset.id = post.id;
+      button.dataset.bsToggle = 'modal';
+      button.dataset.bsTarget = '#modal';
+      button.textContent = i18nt('ui.preview');
+      li.appendChild(button);
+      return li;
+    });
+
+    ul.append(...items);
+    card.appendChild(ul);
+    postsBox.innerHTML = '';
+    postsBox.appendChild(card);
+  };
+
+  const renderModal = (st, el) => {
+    const { posts, modalPostId } = st;
+    const { modal } = el;
+
+    const post = posts.find(({ id }) => id === modalPostId);
+    const modalTitle = modal.querySelector('.modal-title');
+    const modalBody = modal.querySelector('.modal-body');
+    const modalArticle = modal.querySelector('.full-article');
+
+    modalTitle.textContent = post.title;
+    modalBody.textContent = post.description;
+    modalArticle.href = post.link;
+  };
+
   const watchedState = onChange(state, (path, value, prevValue) => {
     console.log('--------------');
     console.log('path:', path);
@@ -124,10 +194,16 @@ const app = (i18n) => {
         console.log('❤️🚀❤️🚀❤️🚀❤️🚀❤️🚀');
         watchedState.feedback.mode = messgeModes.success;
         watchedState.feedback.text = i18n('messages.successLoad');
-        renderFeeds(state, elements);
+        renderFeeds(state, elements, i18n);
         break;
 
       case 'posts':
+      case 'seenPosts':
+        renderPosts(state, elements, i18n);
+        break;
+
+      case 'modalPostId':
+        renderModal(state, elements);
         break;
 
       case 'processing.error':
@@ -154,10 +230,6 @@ const app = (i18n) => {
         watchedState.feedback.text = err.message;
         watchedState.feedback.mode = messgeModes.fail;
       });
-  };
-
-  const handleInputChange = ({ target: { value: feedUrl } }) => {
-    watchedState.input.text = feedUrl;
   };
 
   const makeOriginUrl = (rssUrl) => {
@@ -188,7 +260,7 @@ const app = (i18n) => {
     };
   };
 
-  const onSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     const feedUrl = new FormData(e.target).get('url');
     watchedState.processing.mode = processingModes.loading;
@@ -214,7 +286,6 @@ const app = (i18n) => {
         watchedState.feeds = [feed, ...watchedState.feeds];
         watchedState.processing.mode = processingModes.waiting;
         watchedState.processing.error = '';
-        // watchedState.error = '';
         watchedState.input.text = '';
 
         console.log(feed, posts);
@@ -233,8 +304,21 @@ const app = (i18n) => {
         console.error(err);
       });
   };
+
+  const handlePostClick = (e) => {
+    if (!('id' in e.target.dataset)) return;
+    const { id } = e.target.dataset;
+    watchedState.modalPostId = String(id);
+    watchedState.seenPosts.add(id);
+  };
+
+  const handleInputChange = ({ target: { value: feedUrl } }) => {
+    watchedState.input.text = feedUrl;
+  };
+
   elements.input.addEventListener('input', handleInputChange);
-  elements.form.addEventListener('submit', onSubmit);
+  elements.form.addEventListener('submit', handleSubmit);
+  elements.postsBox.addEventListener('click', handlePostClick);
 };
 
 export default app;
