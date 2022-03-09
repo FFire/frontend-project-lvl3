@@ -13020,7 +13020,7 @@
             t.toString()
           );
         },
-        Ao = (e) => {
+        updateFeeds = (e) => {
           const t = e.feeds.map((t) => {
             const n = jo(t.url);
             return Ci.get(n)
@@ -13041,7 +13041,7 @@
               });
           });
           Promise.all(t).finally(() => {
-            setTimeout(() => Ao(e), 5e3);
+            setTimeout(() => updateFeeds(e), 5e3);
           });
         };
       (() => {
@@ -13072,7 +13072,7 @@
               });
             });
           const i = wi().url().required(),
-            s = Co(e, t, n);
+            feed = Co(e, t, n);
           e.form.addEventListener("submit", (e) => {
             e.preventDefault();
             const t = new FormData(e.target).get("url");
@@ -13083,10 +13083,10 @@
                 .validate(e)
                 .then(() => null)
                 .catch((e) => e.message);
-            })(t, s.feeds).then((e) => {
+            })(t, feed.feeds).then((e) => {
               e
-                ? (s.form = { ...s.form, valid: !1, error: e.key })
-                : ((s.form = { ...s.form, valid: !0, error: null }),
+                ? (feed.form = { ...feed.form, valid: !1, error: e.key })
+                : ((feed.form = { ...feed.form, valid: !0, error: null }),
                   ((e, t) => {
                     e.loadingProcess.status = "loading";
                     const n = jo(t);
@@ -13124,15 +13124,15 @@
                               : "unknown")(t)),
                           (e.loadingProcess.status = "failed");
                       });
-                  })(s, t));
+                  })(feed, t));
             });
           }),
             e.postsBox.addEventListener("click", (e) => {
               if (!("id" in e.target.dataset)) return;
               const { id: t } = e.target.dataset;
-              (s.modal.postId = String(t)), s.ui.seenPosts.add(t);
+              (feed.modal.postId = String(t)), feed.ui.seenPosts.add(t);
             }),
-            setTimeout(() => Ao(s), 5e3);
+            setTimeout(() => updateFeeds(feed), 5e3);
         });
       })();
     })();

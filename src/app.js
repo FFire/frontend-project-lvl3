@@ -1,5 +1,6 @@
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.min.js';
 import _ from 'lodash';
 import onChange from 'on-change';
 import * as yup from 'yup';
