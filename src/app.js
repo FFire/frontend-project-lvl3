@@ -24,7 +24,7 @@ const app = (i18n) => {
     },
     feedback: {
       text: '',
-      mode: messgeModes.none,
+      mode: messgeModes.success,
     },
     feeds: [],
     posts: [],
@@ -59,15 +59,13 @@ const app = (i18n) => {
         if (value === messgeModes.success) {
           elements.feedback.classList.add('text-success');
         }
-        if (value === messgeModes.none) {
-          // watchedState.input.validity = validityModes.valid;
-        }
         break;
 
       case 'processing.mode':
         if (value === processingModes.loading) {
           elements.input.disabled = true;
           elements.submit.disabled = true;
+          validate(watchedState, i18n);
         }
         if (value === processingModes.waiting) {
           elements.input.disabled = false;
@@ -76,11 +74,11 @@ const app = (i18n) => {
         break;
 
       case 'feeds':
+        renderFeeds(state, elements, i18n);
         watchedState.feedback.mode = messgeModes.success;
         watchedState.feedback.text = i18n.t('messages.successLoad');
-        watchedState.processing.mode = processingModes.waiting;
         watchedState.input.text = '';
-        renderFeeds(state, elements, i18n);
+        watchedState.processing.mode = processingModes.waiting;
         break;
 
       case 'posts':
@@ -97,11 +95,13 @@ const app = (i18n) => {
     }
   });
 
+  const handleInputChange = ({ target: { value: feedUrl } }) => {
+    watchedState.input.text = feedUrl;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    // const feedUrl = new FormData(e.target).get('url');
     watchedState.processing.mode = processingModes.loading;
-    validate(watchedState, i18n);
   };
 
   const handlePostClick = (e) => {
@@ -109,10 +109,6 @@ const app = (i18n) => {
     const { id } = e.target.dataset;
     watchedState.modalPostId = String(id);
     watchedState.seenPosts.add(id);
-  };
-
-  const handleInputChange = ({ target: { value: feedUrl } }) => {
-    watchedState.input.text = feedUrl;
   };
 
   elements.input.addEventListener('input', handleInputChange);

@@ -75,9 +75,9 @@ export const loadFeed = (watchedState, i18n) => {
       setTimeout(() => updateFeeds(watchedState), timeOut);
     })
     .catch((err) => {
-      processing.mode = processingModes.waiting;
       feedback.text = i18n.t(getErrorCode(err));
       feedback.mode = messgeModes.fail;
+      processing.mode = processingModes.waiting;
 
       console.error(err);
     });
