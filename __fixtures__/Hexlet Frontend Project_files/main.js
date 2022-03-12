@@ -12994,12 +12994,10 @@
         const originUrl = makeAllOriginUrl(feed.url);
         return axios.get(originUrl)
           .then((rssResponce) => {
-            const posts = parseXmlRss(rssResponce.data.contents).items.map((item) => ({
-              ...item,
-              channelId: feed.id,
-            }));
+            const posts = parseXmlRss(rssResponce.data.contents)
+            .items.map((item) => ({ ...item, channelId: feed.id }));
             const statePosts = state.posts.filter((post) => post.channelId === feed.id);
-            const newPosts = ji(posts, statePosts, (e, t) => e.title === t.title).map((e) => ({
+            const newPosts = ji(posts, statePosts, (unknownE, t) => unknownE.title === t.title).map((e) => ({
               ...e,
               id: uniqueId(),
             }));
