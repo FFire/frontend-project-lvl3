@@ -3,36 +3,36 @@ import { messgeModes, processingModes } from './modes.js';
 import { renderFeeds, renderPosts, renderModal } from './renderers.js';
 import loadFeed from './loaders.js';
 
+const elements = {
+  form: document.querySelector('form.rss-form'),
+  input: document.querySelector('#url-input'),
+  feedback: document.querySelector('.feedback'),
+  submit: document.querySelector('.rss-form button[type="submit"]'),
+  feedsBox: document.querySelector('.feeds'),
+  postsBox: document.querySelector('.posts'),
+  modal: document.querySelector('#modal'),
+};
+
+const state = {
+  processing: {
+    mode: processingModes.waiting,
+  },
+  input: {
+    text: '',
+    disabled: false,
+  },
+  feedback: {
+    text: '',
+    mode: messgeModes.fail,
+  },
+  feeds: [],
+  posts: [],
+  seenPosts: new Set(),
+  modalPostId: null,
+};
+
 const app = (i18n) => {
-  const elements = {
-    form: document.querySelector('form.rss-form'),
-    input: document.querySelector('#url-input'),
-    feedback: document.querySelector('.feedback'),
-    submit: document.querySelector('.rss-form button[type="submit"]'),
-    feedsBox: document.querySelector('.feeds'),
-    postsBox: document.querySelector('.posts'),
-    modal: document.querySelector('#modal'),
-  };
-
-  const state = {
-    processing: {
-      mode: processingModes.waiting,
-    },
-    input: {
-      text: '',
-      disabled: false,
-    },
-    feedback: {
-      text: '',
-      mode: messgeModes.fail,
-    },
-    feeds: [],
-    posts: [],
-    seenPosts: new Set(),
-    modalPostId: null,
-  };
-
-  const watchedState = onChange(state, (path, value) => {
+  const store = onChange(state, (path, value) => {
     console.log('--------------');
     console.log('path:', path);
     console.log('value:', value);
@@ -65,7 +65,7 @@ const app = (i18n) => {
         if (value === processingModes.loading) {
           elements.input.disabled = true;
           elements.submit.disabled = true;
-          loadFeed(watchedState, i18n);
+          loadFeed(store, i18n);
         }
         if (value === processingModes.waiting) {
           elements.input.disabled = false;
@@ -74,10 +74,10 @@ const app = (i18n) => {
         break;
 
       case 'feeds':
-        watchedState.feedback.text = i18n.t('messages.successLoad');
-        watchedState.feedback.mode = messgeModes.success;
-        watchedState.input.text = '';
-        watchedState.processing.mode = processingModes.waiting;
+        store.feedback.text = i18n.t('messages.successLoad');
+        store.feedback.mode = messgeModes.success;
+        store.input.text = '';
+        store.processing.mode = processingModes.waiting;
         renderFeeds(state, elements, i18n);
         break;
 
@@ -96,19 +96,19 @@ const app = (i18n) => {
   });
 
   const handleInputChange = ({ target: { value: feedUrl } }) => {
-    watchedState.input.text = feedUrl;
+    store.input.text = feedUrl;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    watchedState.processing.mode = processingModes.loading;
+    store.processing.mode = processingModes.loading;
   };
 
   const handlePostClick = (e) => {
     if (!('id' in e.target.dataset)) return;
     const { id } = e.target.dataset;
-    watchedState.modalPostId = String(id);
-    watchedState.seenPosts.add(id);
+    store.modalPostId = String(id);
+    store.seenPosts.add(id);
   };
 
   elements.input.addEventListener('input', handleInputChange);

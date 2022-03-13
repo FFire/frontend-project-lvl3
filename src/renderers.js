@@ -1,5 +1,5 @@
-export const renderFeeds = (state, elements, i18n) => {
-  const { feeds } = state;
+export const renderFeeds = (store, elements, i18n) => {
+  const { feeds } = store;
   const { feedsBox } = elements;
 
   const card = document.createElement('div');
@@ -33,8 +33,8 @@ export const renderFeeds = (state, elements, i18n) => {
   feedsBox.appendChild(card);
 };
 
-export const renderPosts = (state, elements, i18n) => {
-  const { posts, seenPosts } = state;
+export const renderPosts = (store, elements, i18n) => {
+  const { posts, seenPosts } = store;
   const { postsBox } = elements;
 
   const card = document.createElement('div');
@@ -78,8 +78,8 @@ export const renderPosts = (state, elements, i18n) => {
   postsBox.appendChild(card);
 };
 
-export const renderModal = (state, elements) => {
-  const { posts, modalPostId } = state;
+export const renderModal = (store, elements) => {
+  const { posts, modalPostId } = store;
   const { modal } = elements;
 
   const post = posts.find(({ id }) => id === modalPostId);
@@ -91,3 +91,5 @@ export const renderModal = (state, elements) => {
   modalBody.textContent = post.description;
   modalArticle.href = post.link;
 };
+
+

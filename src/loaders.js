@@ -31,9 +31,9 @@ const addFeedId = (item, feedId) => ({ ...item, feedId });
 
 const addId = (item) => ({ ...item, id: _.uniqueId() });
 
-const update = (watchedState) => {
+const update = (store) => {
   console.log('--- update feeds ---');
-  const { feeds, posts } = watchedState;
+  const { feeds, posts } = store;
 
   const feedPromises = feeds.map((feed) => {
     const originUrl = makeOriginUrl(feed.url);
@@ -42,7 +42,7 @@ const update = (watchedState) => {
         const { data: { contents } } = rssResponce;
         const parsedFeed = parseXmlRss(contents);
         const parsedPosts = parsedFeed.items.map((item) => addFeedId(item, feed.id));
-        const storedPosts = watchedState.posts.filter((post) => post.feedId === feed.id);
+        const storedPosts = store.posts.filter((post) => post.feedId === feed.id);
         const newPosts = _.differenceWith(parsedPosts, storedPosts, (a, b) => a.title === b.title)
           .map(addId);
         posts.unshift(...newPosts);
@@ -53,14 +53,14 @@ const update = (watchedState) => {
   });
 
   Promise.all(feedPromises).finally(() => {
-    setTimeout(() => update(watchedState), timeOut);
+    setTimeout(() => update(store), timeOut);
   });
 };
 
-const load = (watchedState, i18n) => {
+const load = (store, i18n) => {
   const {
     processing, feedback, posts, feeds, input,
-  } = watchedState;
+  } = store;
 
   const originUrl = makeOriginUrl(input.text);
   axios.get(originUrl)
@@ -73,7 +73,7 @@ const load = (watchedState, i18n) => {
         .map(addId);
       posts.unshift(...newPosts);
       feeds.push(newFeed);
-      setTimeout(() => update(watchedState), timeOut);
+      setTimeout(() => update(store), timeOut);
     })
     .catch((err) => {
       feedback.text = i18n.t(getErrorCode(err));
@@ -84,10 +84,10 @@ const load = (watchedState, i18n) => {
     });
 };
 
-const loadFeed = (watchedState, i18n) => {
+const loadFeed = (store, i18n) => {
   const {
     feedback, input, feeds, processing,
-  } = watchedState;
+  } = store;
 
   yup.string()
     .required(i18n.t('messages.errorUrlRequired'))
@@ -98,7 +98,7 @@ const loadFeed = (watchedState, i18n) => {
     .notOneOf(feeds.map(({ url }) => url), i18n.t('messages.errorRssExist'))
     .validate(input.text)
     .then(() => {
-      load(watchedState, i18n);
+      load(store, i18n);
     })
     .catch((err) => {
       processing.mode = processingModes.waiting;
