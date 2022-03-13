@@ -1,5 +1,6 @@
 import axios from 'axios';
 import _ from 'lodash';
+import * as yup from 'yup';
 import { messgeModes, processingModes } from './modes.js';
 import parseXmlRss from './parser.js';
 
@@ -30,7 +31,7 @@ const addFeedId = (item, feedId) => ({ ...item, feedId });
 
 const addId = (item) => ({ ...item, id: _.uniqueId() });
 
-export const updateFeeds = (watchedState) => {
+const update = (watchedState) => {
   console.log('--- update feeds ---');
   const { feeds, posts } = watchedState;
 
@@ -52,11 +53,11 @@ export const updateFeeds = (watchedState) => {
   });
 
   Promise.all(feedPromises).finally(() => {
-    setTimeout(() => updateFeeds(watchedState), timeOut);
+    setTimeout(() => update(watchedState), timeOut);
   });
 };
 
-export const loadFeed = (watchedState, i18n) => {
+const load = (watchedState, i18n) => {
   const {
     processing, feedback, posts, feeds, input,
   } = watchedState;
@@ -72,7 +73,7 @@ export const loadFeed = (watchedState, i18n) => {
         .map(addId);
       posts.unshift(...newPosts);
       feeds.push(newFeed);
-      setTimeout(() => updateFeeds(watchedState), timeOut);
+      setTimeout(() => update(watchedState), timeOut);
     })
     .catch((err) => {
       feedback.text = i18n.t(getErrorCode(err));
@@ -82,3 +83,28 @@ export const loadFeed = (watchedState, i18n) => {
       console.error(err);
     });
 };
+
+const loadFeed = (watchedState, i18n) => {
+  const {
+    feedback, input, feeds, processing,
+  } = watchedState;
+
+  yup.string()
+    .required(i18n.t('messages.errorUrlRequired'))
+    .matches(
+      /(https?:\/\/)?([\w-])+\.{1}([a-zA-Z]{2,63})([/\w-]*)*\/?\??([^#\n\r]*)?#?([^\n\r]*)/,
+      i18n.t('messages.errorUrlInvalid'),
+    )
+    .notOneOf(feeds.map(({ url }) => url), i18n.t('messages.errorRssExist'))
+    .validate(input.text)
+    .then(() => {
+      load(watchedState, i18n);
+    })
+    .catch((err) => {
+      processing.mode = processingModes.waiting;
+      feedback.text = err.message;
+      feedback.mode = messgeModes.fail;
+    });
+};
+
+export default loadFeed;

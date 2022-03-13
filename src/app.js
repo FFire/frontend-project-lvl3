@@ -1,7 +1,7 @@
 import onChange from 'on-change';
 import { messgeModes, processingModes } from './modes.js';
 import { renderFeeds, renderPosts, renderModal } from './renderers.js';
-import { validate } from './validator.js';
+import loadFeed from './loaders.js';
 
 const app = (i18n) => {
   const elements = {
@@ -24,7 +24,7 @@ const app = (i18n) => {
     },
     feedback: {
       text: '',
-      mode: messgeModes.success,
+      mode: messgeModes.fail,
     },
     feeds: [],
     posts: [],
@@ -65,7 +65,7 @@ const app = (i18n) => {
         if (value === processingModes.loading) {
           elements.input.disabled = true;
           elements.submit.disabled = true;
-          validate(watchedState, i18n);
+          loadFeed(watchedState, i18n);
         }
         if (value === processingModes.waiting) {
           elements.input.disabled = false;
@@ -74,11 +74,11 @@ const app = (i18n) => {
         break;
 
       case 'feeds':
-        renderFeeds(state, elements, i18n);
-        watchedState.feedback.mode = messgeModes.success;
         watchedState.feedback.text = i18n.t('messages.successLoad');
+        watchedState.feedback.mode = messgeModes.success;
         watchedState.input.text = '';
         watchedState.processing.mode = processingModes.waiting;
+        renderFeeds(state, elements, i18n);
         break;
 
       case 'posts':
