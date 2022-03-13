@@ -1,3 +1,5 @@
+import { messageModes } from './modes.js';
+
 export const renderFeeds = (store, elements, i18n) => {
   const { feeds } = store;
   const { feedsBox } = elements;
@@ -92,4 +94,32 @@ export const renderModal = (store, elements) => {
   modalArticle.href = post.link;
 };
 
+export const renderInput = (store, elements) => {
+  const { input: { text, disabled } } = store;
+  const { input, submit } = elements;
 
+  input.value = text;
+  input.disabled = disabled;
+  submit.disabled = disabled;
+};
+
+export const renderFeedback = (store, elements, i18n) => {
+  const { feedback: { text, mode } } = store;
+  const { feedback } = elements;
+
+  feedback.textContent = text;
+  feedback.classList.remove('text-danger');
+  feedback.classList.remove('text-success');
+  switch (mode) {
+    case messageModes.fail:
+      feedback.classList.add('text-danger');
+      break;
+
+    case messageModes.success:
+      feedback.classList.add('text-success');
+      break;
+
+    default:
+      throw new Error(i18n.t('messages.errorNoMode', { mode }));
+  }
+};

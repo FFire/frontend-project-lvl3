@@ -1,4 +1,4 @@
-export const messgeModes = {
+export const messageModes = {
   success: 'success',
   fail: 'fail',
 };

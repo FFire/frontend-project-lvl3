@@ -1,6 +1,8 @@
 import onChange from 'on-change';
-import { messgeModes, processingModes } from './modes.js';
-import { renderFeeds, renderPosts, renderModal } from './renderers.js';
+import { messageModes, processingModes } from './modes.js';
+import {
+  renderFeeds, renderPosts, renderModal, renderInput, renderFeedback,
+} from './renderers.js';
 import loadFeed from './loaders.js';
 
 const elements = {
@@ -23,7 +25,7 @@ const state = {
   },
   feedback: {
     text: '',
-    mode: messgeModes.fail,
+    mode: messageModes.fail,
   },
   feeds: [],
   posts: [],
@@ -33,49 +35,38 @@ const state = {
 
 const app = (i18n) => {
   const store = onChange(state, (path, value) => {
-    console.log('--------------');
-    console.log('path:', path);
-    console.log('value:', value);
+    console.log('✅', 'PATH:', path, '- VALUE:', value);
 
     switch (path) {
       case 'input.text':
-        elements.input.value = value;
-        break;
-
       case 'input.disabled':
-        elements.input.disabled = value;
-        break;
-
-      case 'feedback.text':
-        elements.feedback.textContent = value;
+        renderInput(store, elements);
         break;
 
       case 'feedback.mode':
-        elements.feedback.classList.remove('text-danger');
-        elements.feedback.classList.remove('text-success');
-        if (value === messgeModes.fail) {
-          elements.feedback.classList.add('text-danger');
-        }
-        if (value === messgeModes.success) {
-          elements.feedback.classList.add('text-success');
-        }
+      case 'feedback.text':
+        renderFeedback(state, elements, i18n);
         break;
 
       case 'processing.mode':
-        if (value === processingModes.loading) {
-          elements.input.disabled = true;
-          elements.submit.disabled = true;
-          loadFeed(store, i18n);
-        }
-        if (value === processingModes.waiting) {
-          elements.input.disabled = false;
-          elements.submit.disabled = false;
+        switch (value) {
+          case processingModes.loading:
+            store.input.disabled = true;
+            loadFeed(store, i18n);
+            break;
+
+          case processingModes.waiting:
+            store.input.disabled = false;
+            break;
+
+          default:
+            throw new Error(i18n.t('messages.errorNoMode', { value }));
         }
         break;
 
       case 'feeds':
         store.feedback.text = i18n.t('messages.successLoad');
-        store.feedback.mode = messgeModes.success;
+        store.feedback.mode = messageModes.success;
         store.input.text = '';
         store.processing.mode = processingModes.waiting;
         renderFeeds(state, elements, i18n);

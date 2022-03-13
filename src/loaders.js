@@ -1,7 +1,7 @@
 import axios from 'axios';
 import _ from 'lodash';
 import * as yup from 'yup';
-import { messgeModes, processingModes } from './modes.js';
+import { messageModes, processingModes } from './modes.js';
 import parseXmlRss from './parser.js';
 
 const timeOut = 5 * 60 * 1000;
@@ -77,7 +77,7 @@ const load = (store, i18n) => {
     })
     .catch((err) => {
       feedback.text = i18n.t(getErrorCode(err));
-      feedback.mode = messgeModes.fail;
+      feedback.mode = messageModes.fail;
       processing.mode = processingModes.waiting;
 
       console.error(err);
@@ -103,7 +103,7 @@ const loadFeed = (store, i18n) => {
     .catch((err) => {
       processing.mode = processingModes.waiting;
       feedback.text = err.message;
-      feedback.mode = messgeModes.fail;
+      feedback.mode = messageModes.fail;
     });
 };
 

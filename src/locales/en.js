@@ -27,6 +27,7 @@ export default {
       errorNetwork: 'Network error',
       errorUnknown: 'Unknown error',
       errorNoPath: 'No such message state: {{path}}',
+      errorNoMode: 'No such mode: {{mode}}',
     },
   },
 };
