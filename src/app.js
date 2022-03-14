@@ -1,5 +1,7 @@
+import i18next from 'i18next';
 import { processingModes } from './modes.js';
 import makeStore from './store.js';
+import resources from './locales/index.js';
 
 const elements = {
   form: document.querySelector('form.rss-form'),
@@ -35,4 +37,16 @@ const app = (i18n) => {
   elements.postsBox.addEventListener('click', handlePostClick);
 };
 
-export default app;
+const defaultLanguage = 'ru';
+const runApp = () => {
+  const i18nInst = i18next.createInstance();
+  i18nInst
+    .init({
+      lng: defaultLanguage,
+      debug: true,
+      resources,
+    })
+    .then(() => app(i18nInst));
+};
+
+export default runApp;
