@@ -35,7 +35,7 @@ const makeStore = (elements, i18n) => {
 
       case 'feedback.mode':
       case 'feedback.text':
-        renderFeedback(defaultState, elements, i18n);
+        renderFeedback(store, elements, i18n);
         break;
 
       case 'processing.mode':
@@ -59,16 +59,16 @@ const makeStore = (elements, i18n) => {
         store.feedback.mode = messageModes.success;
         store.input.text = '';
         store.processing.mode = processingModes.waiting;
-        renderFeeds(defaultState, elements, i18n);
+        renderFeeds(store, elements, i18n);
         break;
 
       case 'posts':
       case 'seenPosts':
-        renderPosts(defaultState, elements, i18n);
+        renderPosts(store, elements, i18n);
         break;
 
       case 'modalPostId':
-        renderModal(defaultState, elements);
+        renderModal(store, elements);
         break;
 
       default:
