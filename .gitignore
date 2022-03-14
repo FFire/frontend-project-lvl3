@@ -1,6 +1,7 @@
 .idea
 .vscode
 
+
 *.log
 *.pdf
 *.psd
@@ -17,3 +18,5 @@ coverage
 
 dist
 assets
+__fixtures__
+bin
