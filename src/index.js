@@ -13,3 +13,5 @@ i18nInst
     resources,
   })
   .then(() => app(i18nInst));
+
+export default i18nInst;
