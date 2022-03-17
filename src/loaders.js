@@ -7,7 +7,7 @@ import parseXmlRss from './parser.js';
 const timeOut = 5 * 1000;
 
 const makeOriginUrl = (feedUrl) => {
-  const alloriginsUrl = 'https://hexlet-allorigins.herokuapp.com';
+  const alloriginsUrl = 'https://allorigins.hexlet.app';
   const allOrigin = new URL('/get', alloriginsUrl);
   allOrigin.searchParams.set('url', feedUrl);
   allOrigin.searchParams.set('disableCache', 'true');

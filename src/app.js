@@ -22,6 +22,8 @@ const app = (i18n) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const formData = new FormData(e.target);
+    store.input.text = formData.get('url');
     store.processing.mode = processingModes.loading;
   };
 
@@ -32,7 +34,7 @@ const app = (i18n) => {
     store.seenPosts.add(id);
   };
 
-  elements.input.addEventListener('input', handleInputChange);
+  // elements.input.addEventListener('input', handleInputChange);
   elements.form.addEventListener('submit', handleSubmit);
   elements.postsBox.addEventListener('click', handlePostClick);
 };
