@@ -16,14 +16,13 @@ const elements = {
 const app = (i18n) => {
   const store = makeStore(elements, i18n);
 
-  const handleInputChange = ({ target: { value: feedUrl } }) => {
-    store.input.text = feedUrl;
-  };
+  //  const handleInputChange = ({ target: { value: feedUrl } }) => {
+  //    store.input.text = feedUrl;
+  //  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
-    store.input.text = formData.get('url');
+    store.input.text = new FormData(e.target).get('url');
     store.processing.mode = processingModes.loading;
   };
 
