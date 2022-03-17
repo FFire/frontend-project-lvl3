@@ -3,17 +3,17 @@ import { processingModes } from './modes.js';
 import makeStore from './store.js';
 import resources from './locales/index.js';
 
-const elements = {
-  form: document.querySelector('form.rss-form'),
-  input: document.querySelector('#url-input'),
-  feedback: document.querySelector('.feedback'),
-  submit: document.querySelector('.rss-form button[type="submit"]'),
-  feedsBox: document.querySelector('.feeds'),
-  postsBox: document.querySelector('.posts'),
-  modal: document.querySelector('#modal'),
-};
-
 const app = (i18n) => {
+  const elements = {
+    form: document.querySelector('form.rss-form'),
+    input: document.querySelector('#url-input'),
+    feedback: document.querySelector('.feedback'),
+    submit: document.querySelector('.rss-form button[type="submit"]'),
+    feedsBox: document.querySelector('.feeds'),
+    postsBox: document.querySelector('.posts'),
+    modal: document.querySelector('#modal'),
+  };
+
   const store = makeStore(elements, i18n);
 
   //  const handleInputChange = ({ target: { value: feedUrl } }) => {
