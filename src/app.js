@@ -1,10 +1,29 @@
 import i18next from 'i18next';
+import * as yup from 'yup';
 import { processingModes } from './modes.js';
 import makeStore from './store.js';
 import resources from './locales/index.js';
-import { elements } from './init.js';
 
 const app = (i18n) => {
+  yup.setLocale({
+    string: {
+      url: () => 'messages.errorUrlInvalid',
+    },
+    mixed: {
+      notOneOf: () => 'messages.errorRssExist',
+    },
+  });
+
+  const elements = {
+    form: document.querySelector('form.rss-form'),
+    input: document.querySelector('#url-input'),
+    feedback: document.querySelector('.feedback'),
+    submit: document.querySelector('.rss-form button[type="submit"]'),
+    feedsBox: document.querySelector('.feeds'),
+    postsBox: document.querySelector('.posts'),
+    modal: document.querySelector('#modal'),
+  };
+
   const store = makeStore(elements, i18n);
 
   const handleSubmit = (e) => {

@@ -15,7 +15,6 @@ export default {
       posts: 'Posts',
       feeds: 'Feeds',
       preview: 'Preview',
-
     },
     messages: {
       successLoad: 'RSS successfully uploaded',
