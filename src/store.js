@@ -7,26 +7,8 @@ import {
 } from './renderers.js';
 import loadFeed from './loaders.js';
 
-const defaultState = {
-  processing: {
-    mode: processingModes.waiting,
-  },
-  input: {
-    text: '',
-    disabled: false,
-  },
-  feedback: {
-    messageCode: '',
-    mode: messageModes.fail,
-  },
-  feeds: [],
-  posts: [],
-  seenPosts: new Set(),
-  modalPostId: null,
-};
-
-const makeStore = (elements, i18n) => {
-  const store = onChange(defaultState, (path, value) => {
+const makeStore = (state, elements, i18n) => {
+  const store = onChange(state, (path, value) => {
     // хочу оставить этот вывод лога до финала, иначе очень сложно разбирать динамику состояний
     console.log('✅', 'PATH:', path, '- VALUE:', value);
 

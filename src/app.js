@@ -1,6 +1,6 @@
 import i18next from 'i18next';
 import * as yup from 'yup';
-import { processingModes } from './modes.js';
+import { messageModes, processingModes } from './modes.js';
 import makeStore from './store.js';
 import resources from './locales/index.js';
 
@@ -24,7 +24,25 @@ const app = (i18n) => {
     modal: document.querySelector('#modal'),
   };
 
-  const store = makeStore(elements, i18n);
+  const state = {
+    processing: {
+      mode: processingModes.waiting,
+    },
+    input: {
+      text: '',
+      disabled: false,
+    },
+    feedback: {
+      messageCode: '',
+      mode: messageModes.fail,
+    },
+    feeds: [],
+    posts: [],
+    seenPosts: new Set(),
+    modalPostId: null,
+  };
+
+  const store = makeStore(state, elements, i18n);
 
   const handleSubmit = (e) => {
     e.preventDefault();
