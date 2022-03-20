@@ -2,23 +2,10 @@ import i18next from 'i18next';
 import { processingModes } from './modes.js';
 import makeStore from './store.js';
 import resources from './locales/index.js';
+import { elements } from './init.js';
 
 const app = (i18n) => {
-  const elements = {
-    form: document.querySelector('form.rss-form'),
-    input: document.querySelector('#url-input'),
-    feedback: document.querySelector('.feedback'),
-    submit: document.querySelector('.rss-form button[type="submit"]'),
-    feedsBox: document.querySelector('.feeds'),
-    postsBox: document.querySelector('.posts'),
-    modal: document.querySelector('#modal'),
-  };
-
   const store = makeStore(elements, i18n);
-
-  //  const handleInputChange = ({ target: { value: feedUrl } }) => {
-  //    store.input.text = feedUrl;
-  //  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -33,7 +20,6 @@ const app = (i18n) => {
     store.seenPosts.add(id);
   };
 
-  // elements.input.addEventListener('input', handleInputChange);
   elements.form.addEventListener('submit', handleSubmit);
   elements.postsBox.addEventListener('click', handlePostClick);
 };

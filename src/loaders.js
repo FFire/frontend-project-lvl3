@@ -1,10 +1,12 @@
+// @ts-check
+
 import axios from 'axios';
 import _ from 'lodash';
 import * as yup from 'yup';
 import { messageModes, processingModes } from './modes.js';
 import parseXmlRss from './parser.js';
 
-const timeOut = 5 * 1000;
+const timeOut = 5 * 100_000;
 
 const makeOriginUrl = (feedUrl) => {
   const alloriginsUrl = 'https://allorigins.hexlet.app';
@@ -14,9 +16,9 @@ const makeOriginUrl = (feedUrl) => {
   return allOrigin.toString();
 };
 
-const getErrorCode = (errorObj) => {
-  if (errorObj.isParsingError) return 'messages.errorNotValidRss';
-  if (errorObj.isAxiosError) return 'messages.errorNetwork';
+const getErrorCode = (error) => {
+  if (error.isParsingError) return 'messages.errorNotValidRss';
+  if (error.isAxiosError) return 'messages.errorNetwork';
   return 'messages.errorUnknown';
 };
 
@@ -32,7 +34,6 @@ const addFeedId = (item, feedId) => ({ ...item, feedId });
 const addId = (item) => ({ ...item, id: _.uniqueId() });
 
 const update = (store) => {
-  console.log('--- update feeds ---');
   const { feeds, posts } = store;
 
   const feedPromises = feeds.map((feed) => {
@@ -57,7 +58,13 @@ const update = (store) => {
   });
 };
 
-const load = (store, i18n) => {
+const validate = (url, urls) => yup.string()
+  .required()
+  .url()
+  .notOneOf(urls)
+  .validate(url);
+
+const load = (store) => {
   const {
     processing, feedback, posts, feeds, input,
   } = store;
@@ -76,33 +83,24 @@ const load = (store, i18n) => {
       setTimeout(() => update(store), timeOut);
     })
     .catch((err) => {
-      feedback.text = i18n.t(getErrorCode(err));
+      feedback.messageCode = getErrorCode(err);
       feedback.mode = messageModes.fail;
       processing.mode = processingModes.waiting;
-
-      console.error(err);
     });
 };
 
-const loadFeed = (store, i18n) => {
+const loadFeed = (store) => {
   const {
     feedback, input, feeds, processing,
   } = store;
-
-  yup.string()
-    .required(i18n.t('messages.errorUrlRequired'))
-    .matches(
-      /(https?:\/\/)?([\w-])+\.{1}([a-zA-Z]{2,63})([/\w-]*)*\/?\??([^#\n\r]*)?#?([^\n\r]*)/,
-      i18n.t('messages.errorUrlInvalid'),
-    )
-    .notOneOf(feeds.map(({ url }) => url), i18n.t('messages.errorRssExist'))
-    .validate(input.text)
+  validate(input.text, feeds.map(({ url }) => url))
     .then(() => {
-      load(store, i18n);
+      load(store);
     })
     .catch((err) => {
+      const [errorCode] = err.errors;
       processing.mode = processingModes.waiting;
-      feedback.text = err.message;
+      feedback.messageCode = errorCode;
       feedback.mode = messageModes.fail;
     });
 };

@@ -1,10 +1,12 @@
+// @ts-check
+
 const parseXmlRss = (rssBody) => {
   const domParser = new DOMParser().parseFromString(rssBody, 'text/xml');
   const parseError = domParser.querySelector('parsererror');
   if (parseError) {
     const errorObj = new Error(parseError.textContent);
     errorObj.isParsingError = true;
-    errorObj.data = rssBody;
+    // errorObj.data = rssBody;
     throw errorObj;
   }
   return {

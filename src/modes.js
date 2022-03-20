@@ -1,3 +1,5 @@
+// @ts-check
+
 export const messageModes = {
   success: 'success',
   fail: 'fail',

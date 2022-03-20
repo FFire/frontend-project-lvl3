@@ -1,3 +1,5 @@
+// @ts-check
+
 import { messageModes } from './modes.js';
 
 export const renderFeeds = (store, elements, i18n) => {
@@ -104,10 +106,10 @@ export const renderInput = (store, elements) => {
 };
 
 export const renderFeedback = (store, elements, i18n) => {
-  const { feedback: { text, mode } } = store;
+  const { feedback: { mode, messageCode } } = store;
   const { feedback } = elements;
 
-  feedback.textContent = text;
+  feedback.textContent = i18n.t(messageCode);
   feedback.classList.remove('text-danger');
   feedback.classList.remove('text-success');
   switch (mode) {

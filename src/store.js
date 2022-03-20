@@ -1,3 +1,5 @@
+// @ts-check
+
 import onChange from 'on-change';
 import { messageModes, processingModes } from './modes.js';
 import {
@@ -14,7 +16,7 @@ const defaultState = {
     disabled: false,
   },
   feedback: {
-    text: '',
+    messageCode: '',
     mode: messageModes.fail,
   },
   feeds: [],
@@ -25,6 +27,7 @@ const defaultState = {
 
 const makeStore = (elements, i18n) => {
   const store = onChange(defaultState, (path, value) => {
+    // хочу оставить этот вывод лога до финала, иначе очень сложно разбирать динамику состояний
     console.log('✅', 'PATH:', path, '- VALUE:', value);
 
     switch (path) {
@@ -34,7 +37,7 @@ const makeStore = (elements, i18n) => {
         break;
 
       case 'feedback.mode':
-      case 'feedback.text':
+      case 'feedback.messageCode':
         renderFeedback(store, elements, i18n);
         break;
 
@@ -42,7 +45,7 @@ const makeStore = (elements, i18n) => {
         switch (value) {
           case processingModes.loading:
             store.input.disabled = true;
-            loadFeed(store, i18n);
+            loadFeed(store);
             break;
 
           case processingModes.waiting:
@@ -55,7 +58,7 @@ const makeStore = (elements, i18n) => {
         break;
 
       case 'feeds':
-        store.feedback.text = i18n.t('messages.successLoad');
+        store.feedback.messageCode = 'messages.successLoad';
         store.feedback.mode = messageModes.success;
         store.input.text = '';
         store.processing.mode = processingModes.waiting;
