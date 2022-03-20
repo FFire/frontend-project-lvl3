@@ -5,8 +5,8 @@ const parseXmlRss = (rssBody) => {
   const parseError = domParser.querySelector('parsererror');
   if (parseError) {
     const errorObj = new Error(parseError.textContent);
+    // @ts-ignore
     errorObj.isParsingError = true;
-    // errorObj.data = rssBody;
     throw errorObj;
   }
   return {
