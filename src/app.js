@@ -2,7 +2,7 @@ import i18next from 'i18next';
 import { processingModes } from './modes.js';
 import makeStore from './store.js';
 import resources from './locales/index.js';
-import { init } from './init.js';
+import init from './init.js';
 
 const app = (i18n) => {
   const { state, elements } = init();

@@ -2,7 +2,7 @@ import * as yup from 'yup';
 import { messageModes, processingModes } from './modes.js';
 
 // eslint-disable-next-line import/prefer-default-export
-export const init = () => {
+const init = () => {
   yup.setLocale({
     string: {
       url: () => 'messages.errorUrlInvalid',
@@ -42,3 +42,5 @@ export const init = () => {
 
   return { state, elements };
 };
+
+export default init;
