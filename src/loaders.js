@@ -6,7 +6,7 @@ import * as yup from 'yup';
 import { messageModes, processingModes } from './modes.js';
 import parseXmlRss from './parser.js';
 
-const timeOut = 5 * 100_000;
+const timeOut = 5 * 1000;
 
 const makeOriginUrl = (feedUrl) => {
   const alloriginsUrl = 'https://allorigins.hexlet.app';

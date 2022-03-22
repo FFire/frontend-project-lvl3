@@ -9,7 +9,7 @@ import loadFeed from './loaders.js';
 
 const makeStore = (state, elements, i18n) => {
   const store = onChange(state, (path, value) => {
-    // хочу оставить этот вывод лога до финала, иначе очень сложно разбирать динамику состояний
+    // * хочу оставить этот вывод лога до финала, иначе очень сложно разбирать динамику состояний
     console.log('✅', 'PATH:', path, '- VALUE:', value);
 
     switch (path) {
