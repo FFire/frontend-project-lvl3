@@ -1,8 +1,9 @@
+// @ts-check
+
 import * as yup from 'yup';
 import { messageModes, processingModes } from './modes.js';
 
-// eslint-disable-next-line import/prefer-default-export
-const init = () => {
+export const initYup = () => {
   yup.setLocale({
     string: {
       url: () => 'messages.errorUrlInvalid',
@@ -11,36 +12,32 @@ const init = () => {
       notOneOf: () => 'messages.errorRssExist',
     },
   });
-
-  const elements = {
-    form: document.querySelector('form.rss-form'),
-    input: document.querySelector('#url-input'),
-    feedback: document.querySelector('.feedback'),
-    submit: document.querySelector('.rss-form button[type="submit"]'),
-    feedsBox: document.querySelector('.feeds'),
-    postsBox: document.querySelector('.posts'),
-    modal: document.querySelector('#modal'),
-  };
-
-  const state = {
-    processing: {
-      mode: processingModes.waiting,
-    },
-    input: {
-      text: '',
-      disabled: false,
-    },
-    feedback: {
-      messageCode: '',
-      mode: messageModes.fail,
-    },
-    feeds: [],
-    posts: [],
-    seenPosts: new Set(),
-    modalPostId: null,
-  };
-
-  return { state, elements };
 };
 
-export default init;
+export const initElements = () => ({
+  form: document.querySelector('form.rss-form'),
+  input: document.querySelector('#url-input'),
+  feedback: document.querySelector('.feedback'),
+  submit: document.querySelector('.rss-form button[type="submit"]'),
+  feedsBox: document.querySelector('.feeds'),
+  postsBox: document.querySelector('.posts'),
+  modal: document.querySelector('#modal'),
+});
+
+export const initState = () => ({
+  processing: {
+    mode: processingModes.waiting,
+  },
+  input: {
+    text: '',
+    disabled: false,
+  },
+  feedback: {
+    messageCode: '',
+    mode: messageModes.fail,
+  },
+  feeds: [],
+  posts: [],
+  seenPosts: new Set(),
+  modalPostId: null,
+});
