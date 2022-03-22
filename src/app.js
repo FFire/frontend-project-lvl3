@@ -1,8 +1,5 @@
-import i18next from 'i18next';
 import { processingModes } from './modes.js';
 import makeStore from './store.js';
-import resources from './locales/index.js';
-import { initElements, initState, initYup } from './init.js';
 
 const app = (state, elements, i18n) => {
   const store = makeStore(state, elements, i18n);
@@ -24,14 +21,4 @@ const app = (state, elements, i18n) => {
   elements.postsBox.addEventListener('click', handlePostClick);
 };
 
-const runApp = () => {
-  initYup();
-  const state = initState();
-  const elements = initElements();
-  const i18nInst = i18next.createInstance();
-  i18nInst
-    .init({ lng: 'ru', debug: true, resources })
-    .then(() => app(state, elements, i18nInst));
-};
-
-export default runApp;
+export default app;

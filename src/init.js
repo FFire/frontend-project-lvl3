@@ -1,7 +1,10 @@
 // @ts-check
 
+import i18next from 'i18next';
 import * as yup from 'yup';
+import app from './app.js';
 import { messageModes, processingModes } from './modes.js';
+import resources from './locales/index.js';
 
 export const initYup = () => {
   yup.setLocale({
@@ -14,7 +17,7 @@ export const initYup = () => {
   });
 };
 
-export const initElements = () => ({
+export const getElements = () => ({
   form: document.querySelector('form.rss-form'),
   input: document.querySelector('#url-input'),
   feedback: document.querySelector('.feedback'),
@@ -24,7 +27,7 @@ export const initElements = () => ({
   modal: document.querySelector('#modal'),
 });
 
-export const initState = () => ({
+export const getDefaultState = () => ({
   processing: {
     mode: processingModes.waiting,
   },
@@ -41,3 +44,15 @@ export const initState = () => ({
   seenPosts: new Set(),
   modalPostId: null,
 });
+
+const init = () => {
+  initYup();
+  const state = getDefaultState();
+  const elements = getElements();
+  const i18nInst = i18next.createInstance();
+  i18nInst
+    .init({ lng: 'ru', debug: true, resources })
+    .then(() => app(state, elements, i18nInst));
+};
+
+export default init;
