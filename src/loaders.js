@@ -33,6 +33,10 @@ const addFeedId = (item, feedId) => ({ ...item, feedId });
 
 const addId = (item) => ({ ...item, id: _.uniqueId() });
 
+const makePosts = (feed, id) => feed.items
+  .map((item) => addFeedId(item, id))
+  .map(addId);
+
 const update = (store) => {
   const { feeds, posts } = store;
 
@@ -66,7 +70,7 @@ const validate = (url, urls) => yup.string()
 
 const load = (store) => {
   const {
-    processing, feedback, posts, feeds, input,
+    feedback, posts, feeds, input,
   } = store;
 
   const originUrl = makeOriginUrl(input.text);
@@ -75,9 +79,7 @@ const load = (store) => {
       const { data: { contents } } = rssResponce;
       const parsedFeed = parseXmlRss(contents);
       const newFeed = makeFeed(input.text, parsedFeed);
-      const newPosts = parsedFeed.items
-        .map((item) => addFeedId(item, newFeed.id))
-        .map(addId);
+      const newPosts = makePosts(parsedFeed, newFeed.id);
       posts.unshift(...newPosts);
       feeds.push(newFeed);
       setTimeout(() => update(store), timeOut);
@@ -85,7 +87,6 @@ const load = (store) => {
     .catch((err) => {
       feedback.messageCode = getErrorCode(err);
       feedback.mode = messageModes.fail;
-      processing.mode = processingModes.waiting;
     });
 };
 
@@ -94,14 +95,14 @@ const loadFeed = (store) => {
     feedback, input, feeds, processing,
   } = store;
   validate(input.text, feeds.map(({ url }) => url))
-    .then(() => {
-      load(store);
-    })
+    .then(() => load(store))
     .catch((err) => {
       const [errorCode] = err.errors;
-      processing.mode = processingModes.waiting;
       feedback.messageCode = errorCode;
       feedback.mode = messageModes.fail;
+    })
+    .finally(() => {
+      processing.mode = processingModes.waiting;
     });
 };
 

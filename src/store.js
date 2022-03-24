@@ -43,7 +43,7 @@ const makeStore = (state, elements, i18n) => {
         store.feedback.messageCode = 'messages.successLoad';
         store.feedback.mode = messageModes.success;
         store.input.text = '';
-        store.processing.mode = processingModes.waiting;
+        // store.processing.mode = processingModes.waiting;
         renderFeeds(store, elements, i18n);
         break;
 
