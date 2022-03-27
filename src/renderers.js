@@ -102,7 +102,7 @@ export const renderInput = (store, elements) => {
 
   input.value = text;
   input.disabled = disabled;
-  input.readonly = disabled;
+  input.readOnly = disabled;
   submit.disabled = disabled;
   if (!disabled) input.focus();
 };
