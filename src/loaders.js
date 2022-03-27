@@ -86,7 +86,7 @@ const load = (store) => {
       setTimeout(() => update(store), timeOut);
     })
     .catch((err) => {
-      feedback.messageCode = getErrorCode(err);
+      feedback.i18nCode = getErrorCode(err);
       feedback.mode = messageModes.fail;
       processing.mode = processingModes.ready;
     });
@@ -100,7 +100,7 @@ const loadFeed = (store) => {
     .then(() => load(store))
     .catch((err) => {
       const [errorCode] = err.errors;
-      feedback.messageCode = errorCode;
+      feedback.i18nCode = errorCode;
       feedback.mode = messageModes.fail;
       processing.mode = processingModes.ready;
     });

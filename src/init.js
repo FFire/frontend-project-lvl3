@@ -36,7 +36,7 @@ export const getDefaultState = () => ({
     disabled: false,
   },
   feedback: {
-    messageCode: '',
+    i18nCode: '',
     mode: messageModes.fail,
   },
   feeds: [],

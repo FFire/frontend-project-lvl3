@@ -108,10 +108,10 @@ export const renderInput = (store, elements) => {
 };
 
 export const renderFeedback = (store, elements, i18n) => {
-  const { feedback: { mode, messageCode } } = store;
+  const { feedback: { mode, i18nCode } } = store;
   const { feedback } = elements;
 
-  feedback.textContent = i18n.t(messageCode);
+  feedback.textContent = i18n.t(i18nCode);
   feedback.classList.remove('text-danger');
   feedback.classList.remove('text-success');
   switch (mode) {

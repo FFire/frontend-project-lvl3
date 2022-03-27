@@ -19,7 +19,7 @@ const makeStore = (state, elements, i18n) => {
         break;
 
       case 'feedback.mode':
-      case 'feedback.messageCode':
+      case 'feedback.i18nCode':
         renderFeedback(store, elements, i18n);
         break;
 
@@ -40,7 +40,7 @@ const makeStore = (state, elements, i18n) => {
         break;
 
       case 'feeds':
-        store.feedback.messageCode = 'messages.successLoad';
+        store.feedback.i18nCode = 'messages.successLoad';
         store.feedback.mode = messageModes.success;
         store.input.text = '';
         store.processing.mode = processingModes.ready;
