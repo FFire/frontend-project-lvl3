@@ -3,7 +3,7 @@
 import axios from 'axios';
 import _ from 'lodash';
 import * as yup from 'yup';
-import { messageModes, processingModes } from './modes.js';
+import { messageModes, formModes } from './modes.js';
 import parseXmlRss from './parser.js';
 
 const timeOut = 5 * 1000;
@@ -82,13 +82,13 @@ const load = (store) => {
       const newPosts = makePosts(parsedFeed, newFeed.id);
       posts.unshift(...newPosts);
       feeds.push(newFeed);
-      uiForm.mode = processingModes.ready;
+      uiForm.mode = formModes.ready;
       setTimeout(() => update(store), timeOut);
     })
     .catch((err) => {
       uiMessage.i18nCode = getErrorCode(err);
       uiMessage.mode = messageModes.fail;
-      uiForm.mode = processingModes.ready;
+      uiForm.mode = formModes.ready;
     });
 };
 
@@ -102,7 +102,7 @@ const loadFeed = (store) => {
       const [errorCode] = err.errors;
       uiMessage.i18nCode = errorCode;
       uiMessage.mode = messageModes.fail;
-      uiForm.mode = processingModes.ready;
+      uiForm.mode = formModes.ready;
     });
 };
 

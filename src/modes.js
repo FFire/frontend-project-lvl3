@@ -4,7 +4,7 @@ export const messageModes = {
   success: 'success',
   fail: 'fail',
 };
-export const processingModes = {
+export const formModes = {
   loading: 'loading',
   ready: 'ready',
 };
