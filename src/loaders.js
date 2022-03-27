@@ -70,7 +70,7 @@ const validate = (url, urls) => yup.string()
 
 const load = (store) => {
   const {
-    feedback, posts, feeds, input,
+    feedback, posts, feeds, input, processing,
   } = store;
 
   const originUrl = makeOriginUrl(input.text);
@@ -82,11 +82,13 @@ const load = (store) => {
       const newPosts = makePosts(parsedFeed, newFeed.id);
       posts.unshift(...newPosts);
       feeds.push(newFeed);
+      processing.mode = processingModes.waiting;
       setTimeout(() => update(store), timeOut);
     })
     .catch((err) => {
       feedback.messageCode = getErrorCode(err);
       feedback.mode = messageModes.fail;
+      processing.mode = processingModes.waiting;
     });
 };
 
@@ -100,8 +102,6 @@ const loadFeed = (store) => {
       const [errorCode] = err.errors;
       feedback.messageCode = errorCode;
       feedback.mode = messageModes.fail;
-    })
-    .finally(() => {
       processing.mode = processingModes.waiting;
     });
 };
