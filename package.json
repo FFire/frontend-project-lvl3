@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "description": "RSS aggregator",
-  "main": "src/app.js",
+  "main": "src/init.js",
   "engines": {
     "node": ">=14"
   },
