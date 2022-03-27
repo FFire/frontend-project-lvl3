@@ -70,39 +70,39 @@ const validate = (url, urls) => yup.string()
 
 const load = (store) => {
   const {
-    feedback, posts, feeds, input,
+    uiMessage, posts, feeds, uiForm,
   } = store;
 
-  const originUrl = makeOriginUrl(input.text);
+  const originUrl = makeOriginUrl(uiForm.text);
   axios.get(originUrl)
     .then((rssResponce) => {
       const { data: { contents } } = rssResponce;
       const parsedFeed = parseXmlRss(contents);
-      const newFeed = makeFeed(input.text, parsedFeed);
+      const newFeed = makeFeed(uiForm.text, parsedFeed);
       const newPosts = makePosts(parsedFeed, newFeed.id);
       posts.unshift(...newPosts);
       feeds.push(newFeed);
-      input.mode = processingModes.ready;
+      uiForm.mode = processingModes.ready;
       setTimeout(() => update(store), timeOut);
     })
     .catch((err) => {
-      feedback.i18nCode = getErrorCode(err);
-      feedback.mode = messageModes.fail;
-      input.mode = processingModes.ready;
+      uiMessage.i18nCode = getErrorCode(err);
+      uiMessage.mode = messageModes.fail;
+      uiForm.mode = processingModes.ready;
     });
 };
 
 const loadFeed = (store) => {
   const {
-    feedback, input, feeds,
+    uiMessage, uiForm, feeds,
   } = store;
-  validate(input.text, feeds.map(({ url }) => url))
+  validate(uiForm.text, feeds.map(({ url }) => url))
     .then(() => load(store))
     .catch((err) => {
       const [errorCode] = err.errors;
-      feedback.i18nCode = errorCode;
-      feedback.mode = messageModes.fail;
-      input.mode = processingModes.ready;
+      uiMessage.i18nCode = errorCode;
+      uiMessage.mode = messageModes.fail;
+      uiForm.mode = processingModes.ready;
     });
 };
 

@@ -13,25 +13,25 @@ const makeStore = (state, elements, i18n) => {
     console.log('✅', 'PATH:', path, '- VALUE:', value);
 
     switch (path) {
-      case 'input.text':
-      case 'input.disabled':
+      case 'uiForm.text':
+      case 'uiForm.disabled':
         renderInput(store, elements);
         break;
 
-      case 'feedback.mode':
-      case 'feedback.i18nCode':
+      case 'uiMessage.mode':
+      case 'uiMessage.i18nCode':
         renderFeedback(store, elements, i18n);
         break;
 
-      case 'input.mode':
+      case 'uiForm.mode':
         switch (value) {
           case processingModes.loading:
-            store.input.disabled = true;
+            store.uiForm.disabled = true;
             loadFeed(store);
             break;
 
           case processingModes.ready:
-            store.input.disabled = false;
+            store.uiForm.disabled = false;
             break;
 
           default:
@@ -40,10 +40,10 @@ const makeStore = (state, elements, i18n) => {
         break;
 
       case 'feeds':
-        store.feedback.i18nCode = 'messages.successLoad';
-        store.feedback.mode = messageModes.success;
-        store.input.text = '';
-        store.input.mode = processingModes.ready;
+        store.uiMessage.i18nCode = 'messages.successLoad';
+        store.uiMessage.mode = messageModes.success;
+        store.uiForm.text = '';
+        store.uiForm.mode = processingModes.ready;
         renderFeeds(store, elements, i18n);
         break;
 

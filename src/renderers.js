@@ -97,7 +97,7 @@ export const renderModal = (store, elements) => {
 };
 
 export const renderInput = (store, elements) => {
-  const { input: { text, disabled } } = store;
+  const { uiForm: { text, disabled } } = store;
   const { input, submit } = elements;
 
   input.value = text;
@@ -108,7 +108,7 @@ export const renderInput = (store, elements) => {
 };
 
 export const renderFeedback = (store, elements, i18n) => {
-  const { feedback: { mode, i18nCode } } = store;
+  const { uiMessage: { mode, i18nCode } } = store;
   const { feedback } = elements;
 
   feedback.textContent = i18n.t(i18nCode);
