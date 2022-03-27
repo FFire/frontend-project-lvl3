@@ -17,7 +17,7 @@ export const initYup = () => {
   });
 };
 
-export const elements = {
+export const getElements = () => ({
   form: document.querySelector('form.rss-form'),
   input: document.querySelector('#url-input'),
   feedback: document.querySelector('.feedback'),
@@ -25,9 +25,9 @@ export const elements = {
   feedsBox: document.querySelector('.feeds'),
   postsBox: document.querySelector('.posts'),
   modal: document.querySelector('#modal'),
-};
+});
 
-export const defaultState = {
+export const getDefaultState = () => ({
   processing: {
     mode: processingModes.waiting,
   },
@@ -43,14 +43,14 @@ export const defaultState = {
   posts: [],
   seenPosts: new Set(),
   modalPostId: null,
-};
+});
 
 const init = () => {
   initYup();
   const i18nInst = i18next.createInstance();
   i18nInst
     .init({ lng: 'ru', debug: true, resources })
-    .then(() => app(defaultState, elements, i18nInst));
+    .then(() => app(getDefaultState(), getElements(), i18nInst));
 };
 
 export default init;
