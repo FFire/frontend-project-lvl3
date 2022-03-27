@@ -7,7 +7,7 @@ const app = (state, elements, i18n) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     store.input.text = new FormData(e.target).get('url');
-    store.processing.mode = processingModes.loading;
+    store.input.mode = processingModes.loading;
   };
 
   const handlePostClick = (e) => {

@@ -70,7 +70,7 @@ const validate = (url, urls) => yup.string()
 
 const load = (store) => {
   const {
-    feedback, posts, feeds, input, processing,
+    feedback, posts, feeds, input,
   } = store;
 
   const originUrl = makeOriginUrl(input.text);
@@ -82,19 +82,19 @@ const load = (store) => {
       const newPosts = makePosts(parsedFeed, newFeed.id);
       posts.unshift(...newPosts);
       feeds.push(newFeed);
-      processing.mode = processingModes.ready;
+      input.mode = processingModes.ready;
       setTimeout(() => update(store), timeOut);
     })
     .catch((err) => {
       feedback.i18nCode = getErrorCode(err);
       feedback.mode = messageModes.fail;
-      processing.mode = processingModes.ready;
+      input.mode = processingModes.ready;
     });
 };
 
 const loadFeed = (store) => {
   const {
-    feedback, input, feeds, processing,
+    feedback, input, feeds,
   } = store;
   validate(input.text, feeds.map(({ url }) => url))
     .then(() => load(store))
@@ -102,7 +102,7 @@ const loadFeed = (store) => {
       const [errorCode] = err.errors;
       feedback.i18nCode = errorCode;
       feedback.mode = messageModes.fail;
-      processing.mode = processingModes.ready;
+      input.mode = processingModes.ready;
     });
 };
 

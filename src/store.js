@@ -23,7 +23,7 @@ const makeStore = (state, elements, i18n) => {
         renderFeedback(store, elements, i18n);
         break;
 
-      case 'processing.mode':
+      case 'input.mode':
         switch (value) {
           case processingModes.loading:
             store.input.disabled = true;
@@ -43,7 +43,7 @@ const makeStore = (state, elements, i18n) => {
         store.feedback.i18nCode = 'messages.successLoad';
         store.feedback.mode = messageModes.success;
         store.input.text = '';
-        store.processing.mode = processingModes.ready;
+        store.input.mode = processingModes.ready;
         renderFeeds(store, elements, i18n);
         break;
 

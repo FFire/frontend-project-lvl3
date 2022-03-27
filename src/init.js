@@ -28,12 +28,12 @@ export const getElements = () => ({
 });
 
 export const getDefaultState = () => ({
-  processing: {
-    mode: processingModes.ready,
-  },
+  // processing: {
+  // },
   input: {
     text: '',
     disabled: false,
+    mode: processingModes.ready,
   },
   feedback: {
     i18nCode: '',
