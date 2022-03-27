@@ -29,7 +29,7 @@ export const getElements = () => ({
 
 export const getDefaultState = () => ({
   processing: {
-    mode: processingModes.waiting,
+    mode: processingModes.ready,
   },
   input: {
     text: '',

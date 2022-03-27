@@ -30,7 +30,7 @@ const makeStore = (state, elements, i18n) => {
             loadFeed(store);
             break;
 
-          case processingModes.waiting:
+          case processingModes.ready:
             store.input.disabled = false;
             break;
 
@@ -43,7 +43,7 @@ const makeStore = (state, elements, i18n) => {
         store.feedback.messageCode = 'messages.successLoad';
         store.feedback.mode = messageModes.success;
         store.input.text = '';
-        // store.processing.mode = processingModes.waiting;
+        store.processing.mode = processingModes.ready;
         renderFeeds(store, elements, i18n);
         break;
 

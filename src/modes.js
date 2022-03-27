@@ -6,5 +6,5 @@ export const messageModes = {
 };
 export const processingModes = {
   loading: 'loading',
-  waiting: 'waiting',
+  ready: 'ready',
 };

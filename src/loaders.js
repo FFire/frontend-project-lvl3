@@ -82,13 +82,13 @@ const load = (store) => {
       const newPosts = makePosts(parsedFeed, newFeed.id);
       posts.unshift(...newPosts);
       feeds.push(newFeed);
-      processing.mode = processingModes.waiting;
+      processing.mode = processingModes.ready;
       setTimeout(() => update(store), timeOut);
     })
     .catch((err) => {
       feedback.messageCode = getErrorCode(err);
       feedback.mode = messageModes.fail;
-      processing.mode = processingModes.waiting;
+      processing.mode = processingModes.ready;
     });
 };
 
@@ -102,7 +102,7 @@ const loadFeed = (store) => {
       const [errorCode] = err.errors;
       feedback.messageCode = errorCode;
       feedback.mode = messageModes.fail;
-      processing.mode = processingModes.waiting;
+      processing.mode = processingModes.ready;
     });
 };
 
