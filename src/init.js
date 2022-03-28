@@ -3,7 +3,7 @@
 import i18next from 'i18next';
 import * as yup from 'yup';
 import app from './app.js';
-import { messageModes, formModes } from './modes.js';
+import { messageModes, processingModes } from './modes.js';
 import resources from './locales/index.js';
 
 export const initYup = () => {
@@ -28,14 +28,16 @@ export const getElements = () => ({
 });
 
 export const getDefaultState = () => ({
+  processing: {
+    mode: processingModes.idle,
+  },
   uiForm: {
     text: '',
     disabled: false,
-    mode: formModes.ready,
   },
   uiMessage: {
     i18nCode: '',
-    mode: messageModes.fail,
+    mode: messageModes.error,
   },
   feeds: [],
   posts: [],

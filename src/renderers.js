@@ -96,7 +96,7 @@ export const renderModal = (store, elements) => {
   modalArticle.href = post.link;
 };
 
-export const renderInput = (store, elements) => {
+export const renderForm = (store, elements) => {
   const { uiForm: { text, disabled } } = store;
   const { input, submit } = elements;
 
@@ -115,7 +115,7 @@ export const renderFeedback = (store, elements, i18n) => {
   feedback.classList.remove('text-danger');
   feedback.classList.remove('text-success');
   switch (mode) {
-    case messageModes.fail:
+    case messageModes.error:
       feedback.classList.add('text-danger');
       break;
 

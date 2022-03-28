@@ -1,4 +1,4 @@
-import { formModes } from './modes.js';
+import { processingModes } from './modes.js';
 import makeStore from './store.js';
 
 const app = (state, elements, i18n) => {
@@ -7,7 +7,7 @@ const app = (state, elements, i18n) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     store.uiForm.text = new FormData(e.target).get('url');
-    store.uiForm.mode = formModes.loading;
+    store.processing.mode = processingModes.loading;
   };
 
   const handlePostClick = (e) => {

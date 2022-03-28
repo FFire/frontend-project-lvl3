@@ -1,9 +1,9 @@
 // @ts-check
 
 import onChange from 'on-change';
-import { messageModes, formModes } from './modes.js';
+import { messageModes, processingModes } from './modes.js';
 import {
-  renderFeeds, renderPosts, renderModal, renderInput, renderFeedback,
+  renderFeeds, renderPosts, renderModal, renderForm, renderFeedback,
 } from './renderers.js';
 import loadFeed from './loaders.js';
 
@@ -13,25 +13,29 @@ const makeStore = (state, elements, i18n) => {
     console.log('✅', 'PATH:', path, '- VALUE:', value);
 
     switch (path) {
-      case 'uiForm.text':
-      case 'uiForm.disabled':
-        renderInput(store, elements);
-        break;
-
-      case 'uiMessage.mode':
-      case 'uiMessage.i18nCode':
-        renderFeedback(store, elements, i18n);
-        break;
-
-      case 'uiForm.mode':
+      case 'processing.mode':
         switch (value) {
-          case formModes.loading:
+          case processingModes.idle:
+            store.uiForm.disabled = false;
+            renderForm(store, elements);
+            break;
+
+          case processingModes.loading:
             store.uiForm.disabled = true;
             loadFeed(store);
             break;
 
-          case formModes.ready:
-            store.uiForm.disabled = false;
+          case processingModes.success:
+            store.uiMessage.mode = messageModes.success;
+            renderFeedback(store, elements, i18n);
+            store.uiForm.text = '';
+            store.processing.mode = processingModes.idle;
+            break;
+
+          case processingModes.error:
+            store.uiMessage.mode = messageModes.error;
+            renderFeedback(store, elements, i18n);
+            store.processing.mode = processingModes.idle;
             break;
 
           default:
@@ -40,10 +44,6 @@ const makeStore = (state, elements, i18n) => {
         break;
 
       case 'feeds':
-        store.uiMessage.i18nCode = 'messages.successLoad';
-        store.uiMessage.mode = messageModes.success;
-        store.uiForm.text = '';
-        store.uiForm.mode = formModes.ready;
         renderFeeds(store, elements, i18n);
         break;
 
@@ -54,6 +54,12 @@ const makeStore = (state, elements, i18n) => {
 
       case 'modalPostId':
         renderModal(store, elements);
+        break;
+
+      case 'uiForm.text':
+      case 'uiForm.disabled':
+      case 'uiMessage.mode':
+      case 'uiMessage.i18nCode':
         break;
 
       default:

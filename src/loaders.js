@@ -3,7 +3,7 @@
 import axios from 'axios';
 import _ from 'lodash';
 import * as yup from 'yup';
-import { messageModes, formModes } from './modes.js';
+import { processingModes } from './modes.js';
 import parseXmlRss from './parser.js';
 
 const timeOut = 5 * 1000;
@@ -70,7 +70,7 @@ const validate = (url, urls) => yup.string()
 
 const load = (store) => {
   const {
-    uiMessage, posts, feeds, uiForm,
+    uiMessage, posts, feeds, uiForm, processing,
   } = store;
 
   const originUrl = makeOriginUrl(uiForm.text);
@@ -82,27 +82,25 @@ const load = (store) => {
       const newPosts = makePosts(parsedFeed, newFeed.id);
       posts.unshift(...newPosts);
       feeds.push(newFeed);
-      uiForm.mode = formModes.ready;
+      processing.mode = processingModes.success;
       setTimeout(() => update(store), timeOut);
     })
     .catch((err) => {
       uiMessage.i18nCode = getErrorCode(err);
-      uiMessage.mode = messageModes.fail;
-      uiForm.mode = formModes.ready;
+      processing.mode = processingModes.error;
     });
 };
 
 const loadFeed = (store) => {
   const {
-    uiMessage, uiForm, feeds,
+    uiMessage, uiForm, feeds, processing,
   } = store;
   validate(uiForm.text, feeds.map(({ url }) => url))
     .then(() => load(store))
     .catch((err) => {
       const [errorCode] = err.errors;
       uiMessage.i18nCode = errorCode;
-      uiMessage.mode = messageModes.fail;
-      uiForm.mode = formModes.ready;
+      processing.mode = processingModes.error;
     });
 };
 

@@ -2,9 +2,11 @@
 
 export const messageModes = {
   success: 'success',
-  fail: 'fail',
+  error: 'error',
 };
-export const formModes = {
+export const processingModes = {
+  idle: 'idle',
   loading: 'loading',
-  ready: 'ready',
+  error: 'error',
+  success: 'success',
 };
