@@ -22,6 +22,7 @@ const makeStore = (state, elements, i18n) => {
 
           case processingModes.loading:
             store.uiForm.disabled = true;
+            renderForm(store, elements);
             loadFeed(store);
             break;
 
