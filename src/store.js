@@ -41,7 +41,7 @@ const makeStore = (state, elements, i18n) => {
             break;
 
           default:
-            throw new Error(i18n.t('messages.errorNoMode', { value }));
+            throw new Error(`No such mode: ${value}`);
         }
         break;
 

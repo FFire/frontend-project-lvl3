@@ -26,7 +26,6 @@ export default {
       errorNetwork: 'Ошибка сети',
       errorUnknown: 'Неизвестная ошибка',
       errorNoPath: 'Неизвестный стейт. No such state: {{path}}',
-      errorNoMode: 'Неизвестный режим. No such mode: {{mode}}',
     },
   },
 };
