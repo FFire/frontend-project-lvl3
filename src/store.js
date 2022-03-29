@@ -62,7 +62,7 @@ const makeStore = (state, elements, i18n) => {
         break;
 
       default:
-        throw new Error(i18n.t('messages.errorNoPath', { path }));
+        throw new Error(`No such message state: ${path}`);
     }
   });
   return store;

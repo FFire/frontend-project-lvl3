@@ -25,7 +25,6 @@ export default {
       errorUrlInvalid: 'The link must be a valid URL',
       errorNetwork: 'Network error',
       errorUnknown: 'Unknown error',
-      errorNoPath: 'No such message state: {{path}}',
     },
   },
 };

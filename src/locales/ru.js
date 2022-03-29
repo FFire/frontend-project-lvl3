@@ -25,7 +25,6 @@ export default {
       errorUrlInvalid: 'Ссылка должна быть валидным URL',
       errorNetwork: 'Ошибка сети',
       errorUnknown: 'Неизвестная ошибка',
-      errorNoPath: 'Неизвестный стейт. No such state: {{path}}',
     },
   },
 };
