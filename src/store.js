@@ -26,7 +26,6 @@ const makeStore = (state, elements, i18n) => {
 
           case processingModes.success:
             renderFeedback(store, elements, i18n);
-            store.uiForm.text = '';
             store.processing.mode = processingModes.idle;
             break;
 
@@ -54,7 +53,6 @@ const makeStore = (state, elements, i18n) => {
         break;
 
       case 'uiForm.text':
-      case 'uiMessage.mode':
       case 'uiMessage.i18nCode':
         break;
 

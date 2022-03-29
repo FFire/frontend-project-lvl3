@@ -117,16 +117,15 @@ export const renderFeedback = (store, elements, i18n) => {
   feedback.classList.remove('text-success');
 
   switch (processing.mode) {
+    case processingModes.success:
+      feedback.classList.add('text-success');
+      break;
+
     case processingModes.error:
       feedback.classList.add('text-danger');
       break;
 
-    case processingModes.success:
-      feedback.textContent = i18n.t('messages.successLoad');
-      feedback.classList.add('text-success');
-      break;
-
     default:
-      throw new Error(`No such mode: ${processing.mode}`);
+      throw new Error(`No handler for mode: ${processing.mode}`);
   }
 };

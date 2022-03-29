@@ -82,6 +82,8 @@ const load = (store) => {
       const newPosts = makePosts(parsedFeed, newFeed.id);
       posts.unshift(...newPosts);
       feeds.push(newFeed);
+      uiForm.text = '';
+      uiMessage.i18nCode = 'messages.successLoad';
       processing.mode = processingModes.success;
       setTimeout(() => update(store), timeOut);
     })
