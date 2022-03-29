@@ -33,7 +33,6 @@ export const getDefaultState = () => ({
   },
   uiForm: {
     text: '',
-    disabled: false,
   },
   uiMessage: {
     i18nCode: '',

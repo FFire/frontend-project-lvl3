@@ -16,12 +16,10 @@ const makeStore = (state, elements, i18n) => {
       case 'processing.mode':
         switch (value) {
           case processingModes.idle:
-            store.uiForm.disabled = false;
             renderForm(store, elements);
             break;
 
           case processingModes.loading:
-            store.uiForm.disabled = true;
             renderForm(store, elements);
             loadFeed(store);
             break;
@@ -59,7 +57,6 @@ const makeStore = (state, elements, i18n) => {
         break;
 
       case 'uiForm.text':
-      case 'uiForm.disabled':
       case 'uiMessage.mode':
       case 'uiMessage.i18nCode':
         break;

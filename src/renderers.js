@@ -1,6 +1,6 @@
 // @ts-check
 
-import { messageModes } from './modes.js';
+import { messageModes, processingModes } from './modes.js';
 
 export const renderFeeds = (store, elements, i18n) => {
   const { feeds } = store;
@@ -97,8 +97,9 @@ export const renderModal = (store, elements) => {
 };
 
 export const renderForm = (store, elements) => {
-  const { uiForm: { text, disabled } } = store;
+  const { uiForm: { text }, processing } = store;
   const { input, submit } = elements;
+  const disabled = (processing.mode === processingModes.loading);
 
   input.value = text;
   input.disabled = disabled;
