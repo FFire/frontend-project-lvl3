@@ -3,7 +3,7 @@
 import axios from 'axios';
 import _ from 'lodash';
 import * as yup from 'yup';
-import { processingModes } from './modes.js';
+import processingModes from './modes.js';
 import parseXmlRss from './parser.js';
 
 const timeOut = 5_000;

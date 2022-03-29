@@ -1,7 +1,7 @@
 // @ts-check
 
 import onChange from 'on-change';
-import { messageModes, processingModes } from './modes.js';
+import processingModes from './modes.js';
 import {
   renderFeeds, renderPosts, renderModal, renderForm, renderFeedback,
 } from './renderers.js';
@@ -25,15 +25,12 @@ const makeStore = (state, elements, i18n) => {
             break;
 
           case processingModes.success:
-            store.uiMessage.mode = messageModes.success;
-            store.uiMessage.i18nCode = 'messages.successLoad';
             renderFeedback(store, elements, i18n);
             store.uiForm.text = '';
             store.processing.mode = processingModes.idle;
             break;
 
           case processingModes.error:
-            store.uiMessage.mode = messageModes.error;
             renderFeedback(store, elements, i18n);
             store.processing.mode = processingModes.idle;
             break;

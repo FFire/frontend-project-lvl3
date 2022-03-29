@@ -3,7 +3,7 @@
 import i18next from 'i18next';
 import * as yup from 'yup';
 import app from './app.js';
-import { messageModes, processingModes } from './modes.js';
+import processingModes from './modes.js';
 import resources from './locales/index.js';
 
 export const initYup = () => {
@@ -36,7 +36,6 @@ export const getDefaultState = () => ({
   },
   uiMessage: {
     i18nCode: '',
-    mode: messageModes.error,
   },
   feeds: [],
   posts: [],

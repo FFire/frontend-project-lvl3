@@ -1,12 +1,10 @@
 // @ts-check
 
-export const messageModes = {
-  success: 'success',
-  error: 'error',
-};
-export const processingModes = {
+const processingModes = {
   idle: 'idle',
   loading: 'loading',
   error: 'error',
   success: 'success',
 };
+
+export default processingModes;

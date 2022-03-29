@@ -1,6 +1,6 @@
 // @ts-check
 
-import { messageModes, processingModes } from './modes.js';
+import processingModes from './modes.js';
 
 export const renderFeeds = (store, elements, i18n) => {
   const { feeds } = store;
@@ -109,22 +109,24 @@ export const renderForm = (store, elements) => {
 };
 
 export const renderFeedback = (store, elements, i18n) => {
-  const { uiMessage: { mode, i18nCode } } = store;
+  const { uiMessage: { i18nCode }, processing } = store;
   const { feedback } = elements;
 
   feedback.textContent = i18n.t(i18nCode);
   feedback.classList.remove('text-danger');
   feedback.classList.remove('text-success');
-  switch (mode) {
-    case messageModes.error:
+
+  switch (processing.mode) {
+    case processingModes.error:
       feedback.classList.add('text-danger');
       break;
 
-    case messageModes.success:
+    case processingModes.success:
+      feedback.textContent = i18n.t('messages.successLoad');
       feedback.classList.add('text-success');
       break;
 
     default:
-      throw new Error(i18n.t('messages.errorNoMode', { mode }));
+      throw new Error(`No such mode: ${processing.mode}`);
   }
 };

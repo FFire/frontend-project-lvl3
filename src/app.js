@@ -1,4 +1,4 @@
-import { processingModes } from './modes.js';
+import processingModes from './modes.js';
 import makeStore from './store.js';
 
 const app = (state, elements, i18n) => {
