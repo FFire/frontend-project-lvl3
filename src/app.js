@@ -1,3 +1,4 @@
+import loadFeed from './loaders.js';
 import processingModes from './modes.js';
 import makeStore from './store.js';
 
@@ -8,6 +9,7 @@ const app = (state, elements, i18n) => {
     e.preventDefault();
     store.uiForm.text = new FormData(e.target).get('url');
     store.processing.mode = processingModes.loading;
+    loadFeed(store);
   };
 
   const handlePostClick = (e) => {

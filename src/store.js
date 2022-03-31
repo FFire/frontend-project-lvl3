@@ -5,7 +5,6 @@ import processingModes from './modes.js';
 import {
   renderFeeds, renderPosts, renderModal, renderForm, renderFeedback,
 } from './renderers.js';
-import loadFeed from './loaders.js';
 
 const makeStore = (state, elements, i18n) => {
   const store = onChange(state, (path, value) => {
@@ -16,22 +15,13 @@ const makeStore = (state, elements, i18n) => {
       case 'processing.mode':
         switch (value) {
           case processingModes.idle:
-            renderForm(store, elements);
-            break;
-
           case processingModes.loading:
             renderForm(store, elements);
-            loadFeed(store);
             break;
 
           case processingModes.success:
-            renderFeedback(store, elements, i18n);
-            store.processing.mode = processingModes.idle;
-            break;
-
           case processingModes.error:
             renderFeedback(store, elements, i18n);
-            store.processing.mode = processingModes.idle;
             break;
 
           default:

@@ -85,11 +85,14 @@ const load = (store) => {
       uiForm.text = '';
       uiMessage.i18nCode = 'messages.successLoad';
       processing.mode = processingModes.success;
+      processing.mode = processingModes.idle;
+
       setTimeout(() => update(store), timeOut);
     })
     .catch((err) => {
       uiMessage.i18nCode = getErrorCode(err);
       processing.mode = processingModes.error;
+      processing.mode = processingModes.idle;
     });
 };
 
@@ -103,6 +106,7 @@ const loadFeed = (store) => {
       const [errorCode] = err.errors;
       uiMessage.i18nCode = errorCode;
       processing.mode = processingModes.error;
+      processing.mode = processingModes.idle;
     });
 };
 
